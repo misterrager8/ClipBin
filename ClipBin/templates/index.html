@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% import "macros.html" as macros with context %}
+{% block body %}
+<title>ClipBin</title>
+
+{{ macros.clip_create_form() }}
+
+<div class="row">
+    {% for clip in clips %}
+    {{ macros.clip_card(clip) }}
+    {% endfor %}
+</div>
+
+{% endblock %}

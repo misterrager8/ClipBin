@@ -1,0 +1,57 @@
+:root, html[data-theme='dark'] {
+    --primary-bg: #372549;
+    --primary-txt: white;
+    --secondary-bg: white;
+    --secondary-txt: #372549;
+}
+
+html[data-theme='light'] {
+    --primary-bg: white;
+    --primary-txt: #372549;
+    --secondary-bg: #372549;
+    --secondary-txt: white;
+}
+
+a, a:hover {
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+}
+
+.navbar, .btn-custom, .dropdown-menu, .dropdown-item {
+    background-color: var(--secondary-bg);
+    color: var(--secondary-txt);
+}
+
+body, .modal-content, .input-custom, .input-hidden, .btn-custom:hover, .card, .dropdown-item:hover {
+    background-color: var(--primary-bg);
+    color: var(--primary-txt);
+}
+
+.border-custom, .btn-custom, .input-custom, .card-body {
+    border: 1px solid var(--primary-txt);
+    border-radius: 5px;
+}
+
+.font-custom, .btn-custom, ::placeholder, .dropdown-item {
+    letter-spacing: 2px;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+.btn-custom, .input-custom {
+    padding: 5px 15px;
+}
+
+.btn-custom, .dropdown-item {
+    transition: background-color .5s;
+}
+
+.input-hidden {
+    border: 0;
+}
+
+::placeholder {
+    color: inherit;
+    opacity: 25%;
+}
