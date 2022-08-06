@@ -1,13 +1,15 @@
-from ClipBin import db
+import datetime
 
 
-class Clip(db.Model):
-    __tablename__ = "clips"
-
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.Text)
-    content = db.Column(db.Text)
-    date_created = db.Column(db.DateTime)
-
-    def __init__(self, **kwargs):
-        super(Clip, self).__init__(**kwargs)
+class Clip:
+    def __init__(
+        self,
+        name_: str,
+        content: str = "",
+        date_created=datetime.datetime.now(),
+        id_: int = None,
+    ):
+        self.name_ = name_
+        self.content = content
+        self.date_created = date_created
+        self.id_ = id_
