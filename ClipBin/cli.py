@@ -1,11 +1,10 @@
 import click
-from ClipBin import config, create_app
-from ClipBin.database import Database
-from ClipBin.models import Clip
 import pyperclip
 
+from ClipBin import config, create_app
+from ClipBin.models import Clip
+
 app = create_app(config)
-db = Database()
 
 
 @click.group()
@@ -17,56 +16,57 @@ def cli():
 @cli.command()
 def list_all():
     """List all clips in the database."""
-    clips = db.get_clips()
+    clips = Clip.all()
     click.secho("%s clip(s) found." % len(clips))
     for i in clips:
-        click.secho("[%s] %s" % (i.id_, i.name_), fg="cyan")
+        click.secho("[%s] %s" % (i.id_, i.name_), fg=config.CLI_COLOR)
 
 
 @cli.command()
-@click.argument("name")
+@click.option("--name", "-n", prompt=True)
 def add_clip(name):
     """Add a clip."""
-    db.add_clip(Clip(name))
-    click.secho("Clip added.", fg="green")
+    Clip(name).insert()
+    click.secho("Clip added.", fg=config.CLI_COLOR)
 
 
 @cli.command()
-@click.argument("id")
+@click.option("--id", "-i", prompt=True, type=int)
 def print_clip(id):
     """Print clip."""
-    clip_ = db.get_clip(id)
-    click.secho(clip_.content, fg="cyan")
+    clip_ = Clip.get(id)
+    click.secho(clip_.content, fg=config.CLI_COLOR)
 
 
 @cli.command()
-@click.argument("id")
-@click.argument("src")
+@click.option("--id", "-i", prompt=True, type=int)
+@click.option("--src", "-s", prompt=True)
 def edit_clip(id, src):
     """Edit clip using content in SRC file."""
-    clip_ = db.get_clip(id)
+    clip_ = Clip.get(id)
     with open(src) as f:
         clip_.content = f.read()
 
-    db.edit_clip(clip_)
-    click.secho("Clip edited.", fg="green")
+    clip_.edit()
+    click.secho("Clip edited.", fg=config.CLI_COLOR)
 
 
 @cli.command()
-@click.argument("id")
+@click.option("--id", "-i", prompt=True, type=int)
 def copy_clip(id):
     """Copy clip to clipboard."""
-    clip_ = db.get_clip(id)
+    clip_ = Clip.get(id)
     pyperclip.copy(clip_.content)
-    click.secho("Clip copied.", fg="green")
+    click.secho("Clip copied.", fg=config.CLI_COLOR)
 
 
 @cli.command()
-@click.argument("id")
+@click.option("--id", "-i", prompt=True, type=int)
 def delete_clip(id):
     """Delete clip."""
-    db.delete_clip(id)
-    click.secho("Clip deleted.", fg="green")
+    clip_ = Clip.get(id)
+    clip_.delete()
+    click.secho("Clip deleted.", fg=config.CLI_COLOR)
 
 
 @cli.command()
