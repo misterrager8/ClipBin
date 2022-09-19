@@ -24,9 +24,10 @@ def list_all():
 
 @cli.command()
 @click.option("--name", "-n", prompt=True)
-def add_clip(name):
+@click.option("--file", "-f")
+def add_clip(name, file):
     """Add a clip."""
-    Clip(name).insert()
+    Clip(name, content=open(file).read() if file else "").insert()
     click.secho("Clip added.", fg=config.CLI_COLOR)
 
 
