@@ -62,6 +62,16 @@ def copy_clip(id):
 
 @cli.command()
 @click.option("--id", "-i", prompt=True, type=int)
+@click.option("--name", "-n", prompt=True, type=str)
+def save_clip(id, name):
+    """Save clip to file."""
+    clip_ = Clip.get(id)
+    open(name, "w").write(clip_.content)
+    click.secho(f"Clip saved to {name}.", fg=config.CLI_COLOR)
+
+
+@cli.command()
+@click.option("--id", "-i", prompt=True, type=int)
 def delete_clip(id):
     """Delete clip."""
     clip_ = Clip.get(id)
