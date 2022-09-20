@@ -1,3 +1,12 @@
+$(document).ready(function() {
+    document.documentElement.setAttribute('data-theme', localStorage.getItem('ClipBin'));
+});
+
+function changeTheme(theme) {
+    localStorage.setItem('ClipBin', theme);
+    document.documentElement.setAttribute('data-theme', localStorage.getItem('ClipBin'));
+}
+
 function toggleDiv(divId) {
     $('#' + divId).fadeToggle(150);
 }

@@ -1,16 +1,25 @@
-a, a:hover {
+:root, html[data-theme="dark"] {
+    --primary-bg: #1a1a1a;
+    --primary-txt: white;
+}
+
+html[data-theme="light"] {
+    --primary-bg: white;
+    --primary-txt: #1a1a1a;
+}
+
+a, a:hover, .nav-link, .nav-link:hover {
     text-decoration: none;
     cursor: pointer;
     color: inherit;
 }
 
-body, .modal-content {
-    background-color: #1a1a1a;
-    color: white;
+body, .modal-content, nav {
+    background-color: var(--primary-bg);
+    color: var(--primary-txt);
 }
 
 .form-control, .form-control:focus {
     background-color: inherit;
     color: inherit;
-    border: 0;
 }
