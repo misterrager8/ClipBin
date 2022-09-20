@@ -15,7 +15,7 @@
     </div>
     <div id="viewClip{{ clip_.id_ }}" style="display: none; white-space: pre-wrap;" class="p-5 font-monospace">{{ clip_.content }}</div>
 </div>
-
+<textarea id="content{{ clip_.id_ }}" style="display: none;">{{ clip_.content }}</textarea>
 {% endmacro %}
 
 {% macro add_clip_form() %}

@@ -12,6 +12,12 @@ function toggleDiv(divId) {
 }
 
 function copyClip(clipId) {
+    x = document.getElementById('content' + clipId);
+    x.style.display = 'block';
+    x.select();
+    document.execCommand('copy');
+    x.style.display = 'none';
+
     $('#copyClip' + clipId).toggleClass('bi-clipboard bi-clipboard-check text-success');
     setTimeout(function() {
         $('#copyClip' + clipId).toggleClass('bi-clipboard bi-clipboard-check text-success');
