@@ -1,6 +1,6 @@
 from flask import current_app, redirect, render_template, request
 
-from ClipBin.models import Clip
+from clip_bin.models import Clip
 
 
 @current_app.route("/")

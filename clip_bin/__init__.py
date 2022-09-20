@@ -1,7 +1,7 @@
 import mysql.connector
 from flask import Flask
 
-from ClipBin import config
+from clip_bin import config
 
 mysql_ = mysql.connector.connect(
     username=config.user, password=config.password, host=config.host

@@ -1,13 +1,13 @@
 {% macro clip_card(clip_) %}
-<div class="col-xl-4">
-    <div class="border-bottom p-3 mb-3">
-        <a data-bs-toggle="modal" data-bs-target="#preview{{ clip_.id_ }}" class="fw-bold">{{ clip_.name_ }}</a>
-        <div class="small text-muted fst-italic">Created {{ clip_.date_created.strftime('%-m/%-d/%y') }}</div>
-        <div class="mt-3">
-            <a class="me-2" onclick="copyClip({{ clip_.id_ }})"><i class="bi bi-clipboard" id="copyClip{{ clip_.id_ }}"></i></a>
-            <a class="me-2" href="{{ url_for('editor', id_=clip_.id_) }}"><i class="bi bi-pen"></i></a>
-            <a class="text-danger" onclick="toggleDiv('deleteClip' + {{ clip_.id_ }})"><i class="bi bi-trash3"></i></a>
-            <a class="text-danger" id="deleteClip{{ clip_.id_ }}" style="display: none" href="{{ url_for('clip_delete', id_=clip_.id_) }}">Delete?</a>
+<div class="col-xl-12">
+    <div class="border-bottom p-3 mb-3 row">
+        <a data-bs-toggle="modal" data-bs-target="#preview{{ clip_.id_ }}" class="fw-bold col">{{ clip_.name_ }}</a>
+        <div class="col small text-muted fst-italic">Created {{ clip_.date_created.strftime('%-m/%-d/%y') }}</div>
+        <div class="col">
+            <a class="float-end me-2" onclick="copyClip({{ clip_.id_ }})"><i class="bi bi-clipboard" id="copyClip{{ clip_.id_ }}"></i></a>
+            <a class="float-end me-2" href="{{ url_for('editor', id_=clip_.id_) }}"><i class="bi bi-pen"></i></a>
+            <a class="float-end text-danger" onclick="toggleDiv('deleteClip' + {{ clip_.id_ }})"><i class="bi bi-trash3"></i></a>
+            <a class="float-end text-danger" id="deleteClip{{ clip_.id_ }}" style="display: none" href="{{ url_for('clip_delete', id_=clip_.id_) }}">Delete?</a>
         </div>
     </div>
 </div>

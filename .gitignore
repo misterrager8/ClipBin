@@ -2,3 +2,4 @@ ClipBin.egg-info/
 .env
 .sh
 todo.txt
+*.pyc

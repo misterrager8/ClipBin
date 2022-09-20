@@ -1,6 +1,6 @@
 import datetime
 
-from ClipBin import cursor_, mysql_
+from clip_bin import cursor_, mysql_
 
 
 class Clip:

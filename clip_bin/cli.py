@@ -1,8 +1,8 @@
 import click
 import pyperclip
 
-from ClipBin import config, create_app
-from ClipBin.models import Clip
+from clip_bin import config, create_app
+from clip_bin.models import Clip
 
 app = create_app(config)
 
