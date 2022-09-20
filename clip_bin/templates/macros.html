@@ -1,41 +1,35 @@
 {% macro clip_card(clip_) %}
 <div class="col-xl-12">
     <div class="border-bottom p-3 mb-3 row">
-        <a data-bs-toggle="modal" data-bs-target="#preview{{ clip_.id_ }}" class="fw-bold col">{{ clip_.name_ }}</a>
+        <a onclick="toggleDiv('viewClip' + {{ clip_.id_ }})" class="fw-bold col">{{ clip_.name_ }}</a>
         <div class="col small text-muted fst-italic">Created {{ clip_.date_created.strftime('%-m/%-d/%y') }}</div>
         <div class="col">
-            <a class="float-end me-2" onclick="copyClip({{ clip_.id_ }})"><i class="bi bi-clipboard" id="copyClip{{ clip_.id_ }}"></i></a>
-            <a class="float-end me-2" href="{{ url_for('editor', id_=clip_.id_) }}"><i class="bi bi-pen"></i></a>
-            <a class="float-end text-danger" onclick="toggleDiv('deleteClip' + {{ clip_.id_ }})"><i class="bi bi-trash3"></i></a>
-            <a class="float-end text-danger" id="deleteClip{{ clip_.id_ }}" style="display: none" href="{{ url_for('clip_delete', id_=clip_.id_) }}">Delete?</a>
+            <a class="float-end" onclick="copyClip({{ clip_.id_ }})"><i class="bi bi-clipboard" id="copyClip{{ clip_.id_ }}"></i></a>
+            <a class="float-end me-2" onclick="toggleDiv('editClip' + {{ clip_.id_ }})"><i class="bi bi-pen"></i></a>
+            <a class="float-end text-danger me-2" onclick="toggleDiv('deleteClip' + {{ clip_.id_ }})"><i class="bi bi-trash3"></i></a>
+            <a class="float-end text-danger badge" id="deleteClip{{ clip_.id_ }}" style="display: none" href="{{ url_for('clip_delete', id_=clip_.id_) }}">Delete?</a>
         </div>
     </div>
-</div>
-
-<div class="modal" id="preview{{ clip_.id_ }}">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content p-3">
-            <p style="white-space: pre-wrap" class="font-monospace">{{ clip_.content }}</p>
-        </div>
+    <div id="editClip{{ clip_.id_ }}" style="display: none;">
+        {{ edit_clip_form(clip_) }}
     </div>
+    <div id="viewClip{{ clip_.id_ }}" style="display: none; white-space: pre-wrap;" class="p-5 font-monospace">{{ clip_.content }}</div>
 </div>
 
 {% endmacro %}
 
-{% macro clip_add_form() %}
-<form method="POST" action="{{ url_for('clip_add') }}" class="input-group">
-    <input class="form-control" placeholder="+ New Clip" name="name_" autocomplete="off" required>
-    <button type="submit" class="btn btn-outline-success"><i class="bi bi-plus-lg"></i> Add Clip</button>
+{% macro add_clip_form() %}
+<form method="POST" action="{{ url_for('add_clip') }}">
+    <input class="form-control mb-3" placeholder="Name" name="name_" autocomplete="off" required>
+    <textarea rows="20" class="form-control w-100 font-monospace mb-3" placeholder="Content" name="content" autocomplete="off" required></textarea>
+    <button type="submit" class="btn btn-outline-success w-100">Add Clip</button>
 </form>
 {% endmacro %}
 
-{% macro clip_editor(clip_) %}
-<form method="POST" action="{{ url_for('editor', id_=clip_.id_) }}">
-    <div class="input-group mb-3">
-        <a class="input-group-text" href="{{ url_for('index') }}"><i class="bi bi-house"></i></a>
-        <input class="form-control fst-italic fw-bold text-muted" placeholder="Name" name="name_" autocomplete="off" required value="{{ clip_.name_ }}">
-    </div>
-    <textarea class="form-control w-100 h-100 font-monospace" placeholder="Content" name="content" autocomplete="off" required>{{ clip_.content }}</textarea>
-    <button type="submit" class="btn btn-outline-success w-100 fixed-bottom"><i class="bi bi-save"></i> Save</button>
+{% macro edit_clip_form(clip_) %}
+<form method="POST" action="{{ url_for('edit_clip', id_=clip_.id_) }}">
+    <input class="form-control mb-3" placeholder="Name" name="name_" autocomplete="off" required value="{{ clip_.name_ }}">
+    <textarea rows="20" class="form-control w-100 font-monospace mb-3" placeholder="Content" name="content" autocomplete="off" required>{{ clip_.content }}</textarea>
+    <button type="submit" class="btn btn-outline-success w-100"><i class="bi bi-save"></i> Save</button>
 </form>
 {% endmacro %}

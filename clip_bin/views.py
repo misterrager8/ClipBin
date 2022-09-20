@@ -8,23 +8,21 @@ def index():
     return render_template("index.html", clips=Clip.all())
 
 
-@current_app.route("/clip_add", methods=["POST"])
-def clip_add():
+@current_app.route("/add_clip", methods=["POST"])
+def add_clip():
     Clip(request.form["name_"]).insert()
 
     return redirect(request.referrer)
 
 
-@current_app.route("/editor", methods=["POST", "GET"])
-def editor():
+@current_app.route("/edit_clip", methods=["POST"])
+def edit_clip():
     clip_ = Clip.get(int(request.args.get("id_")))
-    if request.method == "GET":
-        return render_template("editor.html", clip_=clip_)
-    else:
-        clip_.name_ = request.form["name_"]
-        clip_.content = request.form["content"]
-        clip_.edit()
-        return redirect(request.referrer)
+
+    clip_.name_ = request.form["name_"]
+    clip_.content = request.form["content"]
+    clip_.edit()
+    return redirect(request.referrer)
 
 
 @current_app.route("/clip_delete")

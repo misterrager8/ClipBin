@@ -2,8 +2,9 @@
 {% import "macros.html" as macros with context %}
 {% block body %}
 <title>ClipBin</title>
-{{ macros.clip_add_form() }}
-<div class="row">
+<a class="btn btn-sm btn-outline-success" onclick="toggleDiv('addClip')"><i class="bi bi-plus-lg"></i> New Clip</a>
+<div class="mt-3" id="addClip" style="display: none;">{{ macros.add_clip_form() }}</div>
+<div class="row mt-3">
     {% for i in clips %}
     {{ macros.clip_card(i) }}
     {% endfor %}
