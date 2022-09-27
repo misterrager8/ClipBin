@@ -8,6 +8,6 @@ ENV = os.getenv("env")
 DEBUG = os.getenv("debug")
 CLI_COLOR = os.getenv("cli_color")
 
-user = os.getenv("user")
-password = os.getenv("password")
-host = os.getenv("host")
+SQLALCHEMY_DATABASE_URI = os.getenv("db")
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+PORT = os.getenv("port") or "5000"

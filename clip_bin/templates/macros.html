@@ -1,21 +1,23 @@
 {% macro clip_card(clip_) %}
 <div class="col-xl-12">
-    <div class="border-bottom p-3 mb-3 row">
-        <a onclick="toggleDiv('viewClip' + {{ clip_.id_ }})" class="fw-bold col">{{ clip_.name_ }}</a>
-        <div class="col small text-muted fst-italic">Created {{ clip_.date_created.strftime('%-m/%-d/%y') }}</div>
+    <div class="p-1 mb-1 row hover">
         <div class="col">
-            <a class="float-end" onclick="copyClip({{ clip_.id_ }})"><i class="bi bi-clipboard" id="copyClip{{ clip_.id_ }}"></i></a>
-            <a class="float-end me-2" onclick="toggleDiv('editClip' + {{ clip_.id_ }})"><i class="bi bi-pen"></i></a>
-            <a class="float-end text-danger me-2" onclick="toggleDiv('deleteClip' + {{ clip_.id_ }})"><i class="bi bi-trash3"></i></a>
-            <a class="float-end text-danger badge" id="deleteClip{{ clip_.id_ }}" style="display: none" href="{{ url_for('clip_delete', id_=clip_.id_) }}">Delete?</a>
+            <a class="me-2" onclick="copyClip({{ clip_.id }})"><i class="bi bi-clipboard" id="copyClip{{ clip_.id }}"></i></a>
+            <a onclick="toggleDiv('viewClip' + {{ clip_.id }})" class="font-custom fw-bold ">{{ clip_.name_ }}</a>
+        </div>
+        <div class="col small text-muted fst-italic"><i class="bi bi-plus-lg"></i> {{ clip_.date_created.strftime('%-d %B %Y') }}</div>
+        <div class="col">
+            <a class="float-end text-danger mx-2" onclick="toggleDiv('deleteClip' + {{ clip_.id }})"><i class="bi bi-x-lg"></i></a>
+            <a class="float-end text-danger badge" id="deleteClip{{ clip_.id }}" style="display: none" href="{{ url_for('clip_delete', id_=clip_.id) }}">Delete?</a>
+            <a class="float-end mx-2" onclick="toggleDiv('editClip' + {{ clip_.id }})"><i class="bi bi-pen"></i></a>
         </div>
     </div>
-    <div id="editClip{{ clip_.id_ }}" style="display: none;">
+    <div id="editClip{{ clip_.id }}" style="display: none;" class="p-5">
         {{ edit_clip_form(clip_) }}
     </div>
-    <div id="viewClip{{ clip_.id_ }}" style="display: none; white-space: pre-wrap;" class="p-5 font-monospace">{{ clip_.content }}</div>
+    <div id="viewClip{{ clip_.id }}" style="display: none; white-space: pre-wrap;" class="p-5 font-monospace">{{ clip_.content }}</div>
 </div>
-<textarea id="content{{ clip_.id_ }}" style="display: none;">{{ clip_.content }}</textarea>
+<textarea id="content{{ clip_.id }}" style="display: none;">{{ clip_.content }}</textarea>
 {% endmacro %}
 
 {% macro add_clip_form() %}
@@ -27,7 +29,7 @@
 {% endmacro %}
 
 {% macro edit_clip_form(clip_) %}
-<form method="POST" action="{{ url_for('edit_clip', id_=clip_.id_) }}">
+<form method="POST" action="{{ url_for('edit_clip', id_=clip_.id) }}">
     <input class="form-control mb-3" placeholder="Name" name="name_" autocomplete="off" required value="{{ clip_.name_ }}">
     <textarea rows="20" class="form-control w-100 font-monospace mb-3" placeholder="Content" name="content" autocomplete="off" required>{{ clip_.content }}</textarea>
     <button type="submit" class="btn btn-outline-success w-100"><i class="bi bi-save"></i> Save</button>

@@ -1,11 +1,20 @@
-$(document).ready(function() {
-    document.documentElement.setAttribute('data-theme', localStorage.getItem('ClipBin'));
-});
+$(document).ready(function() {{
+    localStorage.getItem('ClipBin') === 'dark' ? setDark() : setLight();
+}});
 
-function changeTheme(theme) {
-    localStorage.setItem('ClipBin', theme);
+function setDark() {{
+    localStorage.setItem('ClipBin', 'dark');
     document.documentElement.setAttribute('data-theme', localStorage.getItem('ClipBin'));
-}
+    $('#dark').show();
+    $('#light').hide();
+}}
+
+function setLight() {{
+    localStorage.setItem('ClipBin', 'light');
+    document.documentElement.setAttribute('data-theme', localStorage.getItem('ClipBin'));
+    $('#light').show();
+    $('#dark').hide();
+}}
 
 function toggleDiv(divId) {
     $('#' + divId).fadeToggle(150);
