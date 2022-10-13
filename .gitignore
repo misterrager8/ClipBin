@@ -3,3 +3,4 @@ ClipBin.egg-info/
 .sh
 todo.txt
 *.pyc
+_build/
