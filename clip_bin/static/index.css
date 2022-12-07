@@ -14,25 +14,21 @@ a, a:hover, .nav-link, .nav-link:hover {
     color: inherit;
 }
 
-body, .modal-content, nav {
+body, .form-control, .form-control:focus {
     background-color: var(--primary-bg);
     color: var(--primary-txt);
-}
-
-.form-control, .form-control:focus {
-    background-color: inherit;
-    color: inherit;
 }
 
 .btn, .nav-link, ::placeholder, .font-custom {
     letter-spacing: 2px;
 }
 
-.btn {
-    text-transform: uppercase;
-    font-size: 0.9em;
+.selected {
+    border-bottom: 1px dotted;
+    border-top: 1px dotted;
 }
 
-.hover:hover {
-    border-bottom: 1px solid;
+#content {
+    font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    font-size: 0.9em;
 }

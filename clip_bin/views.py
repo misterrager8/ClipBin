@@ -1,35 +1,61 @@
-import datetime
-
-from flask import current_app, redirect, render_template, request
+from flask import current_app, render_template, request
 
 from clip_bin.models import Clip
 
 
 @current_app.route("/")
 def index():
-    return render_template("index.html", clips=Clip.query.all())
+    return render_template("index.html")
 
 
-@current_app.route("/add_clip", methods=["POST"])
-def add_clip():
-    Clip(name_=request.form["name_"], date_created=datetime.datetime.now()).insert()
+@current_app.route("/create_clip", methods=["POST"])
+def create_clip():
+    clip_ = Clip(request.form.get("name"))
+    clip_.path.touch()
+    return ""
 
-    return redirect(request.referrer)
+
+@current_app.route("/get_clips")
+def get_clips():
+    return dict(clips=[i.to_dict() for i in Clip.all()])
+
+
+@current_app.route("/get_favorites")
+def get_favorites():
+    return dict(favorites=[i.to_dict() for i in Clip.favorites()])
+
+
+@current_app.route("/get_clip")
+def get_clip():
+    clip_ = Clip.get(request.args.get("name"))
+    return clip_.to_dict()
 
 
 @current_app.route("/edit_clip", methods=["POST"])
 def edit_clip():
-    clip_ = Clip.query.get(int(request.args.get("id_")))
+    clip_ = Clip.get(request.form.get("name"))
+    clip_.edit(request.form.get("content"))
 
-    clip_.name_ = request.form["name_"]
-    clip_.content = request.form["content"]
-    clip_.edit()
-    return redirect(request.referrer)
+    return ""
 
 
-@current_app.route("/clip_delete")
-def clip_delete():
-    clip_ = Clip.query.get(int(request.args.get("id_")))
-    clip_.delete()
+@current_app.route("/delete_clip")
+def delete_clip():
+    clip_ = Clip.get(request.args.get("name"))
+    clip_.path.unlink()
 
-    return redirect(request.referrer)
+    return ""
+
+
+@current_app.route("/toggle_favorite")
+def toggle_favorite():
+    clip_ = Clip.get(request.args.get("name"))
+    clip_.favorite()
+
+    return ""
+
+
+@current_app.route("/get_content")
+def get_content():
+    clip_ = Clip.get(request.args.get("name"))
+    return dict(name=clip_.name, content=clip_.content)

@@ -1,13 +1,9 @@
 import os
+from pathlib import Path
 
 import dotenv
 
 dotenv.load_dotenv()
 
-ENV = os.getenv("env")
-DEBUG = os.getenv("debug")
-CLI_COLOR = os.getenv("cli_color")
-
-SQLALCHEMY_DATABASE_URI = os.getenv("db")
-SQLALCHEMY_TRACK_MODIFICATIONS = False
-PORT = os.getenv("port") or "5000"
+HOME_DIR = Path(os.getenv("home_dir"))
+PORT = os.getenv("port")

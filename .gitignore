@@ -1,6 +1,4 @@
 ClipBin.egg-info/
 .env
-.sh
-todo.txt
+todos.txt
 *.pyc
-_build/
