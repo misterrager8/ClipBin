@@ -1,34 +1,39 @@
-:root, html[data-theme="dark"] {
-    --primary-bg: #1a1a1a;
-    --primary-txt: white;
+:root, html[data-theme='light'] {
+	--primary-bg: #cccccc;
+	--primary-txt: #1a1a1a;
 }
 
-html[data-theme="light"] {
-    --primary-bg: white;
-    --primary-txt: #1a1a1a;
+html[data-theme='dark'] {
+	--primary-bg: #1a1a1a;
+	--primary-txt: #cccccc;
 }
 
 a, a:hover, .nav-link, .nav-link:hover {
-    text-decoration: none;
-    cursor: pointer;
-    color: inherit;
+	color: inherit;
+	text-decoration: none;
+	cursor: pointer;
 }
 
-body, .form-control, .form-control:focus {
-    background-color: var(--primary-bg);
-    color: var(--primary-txt);
+body, nav, .form-control, .form-control:focus {
+	background-color: var(--primary-bg);
+	color: var(--primary-txt);
 }
 
-.btn, .nav-link, ::placeholder, .font-custom {
-    letter-spacing: 2px;
+.heading, .btn, .nav-link, .badge, ::placeholder {
+	letter-spacing: 2px;
+}
+
+.badge {
+	color: inherit;
+	border: 1px solid;
+}
+
+.form-control {
+	border: 1px solid;
 }
 
 .selected {
-    border-bottom: 1px dotted;
-    border-top: 1px dotted;
-}
-
-#content {
-    font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
-    font-size: 0.9em;
+	background-color: var(--primary-txt);
+	color: var(--primary-bg);
+	border-radius: 5px;
 }

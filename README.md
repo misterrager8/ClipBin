@@ -1,19 +1,23 @@
-# ClipBin
----
+#  ClipBin
+
 ![GitHub language count](https://img.shields.io/github/languages/count/misterrager8/ClipBin)
 ![GitHub top language](https://img.shields.io/github/languages/top/misterrager8/ClipBin)
 ![GitHub last commit](https://img.shields.io/github/last-commit/misterrager8/ClipBin)
 ![GitHub](https://img.shields.io/github/license/misterrager8/clipbin)
 
-Simple and intuitive code snippet and clipboard manager. It will save any text or code snippet in a MySQL database, allowing you to access it later. Comes with both a command-line and web-based interface, powered by Flask. You can also save file contents straight into a copyable snippet for convenience. Lightweight and barebones app for developers like me, who like to make their own macros and code snippets for frequent use.
+Save important snippets of code or text that you commonly copy and paste. Locally-hosted and ran from your browser of choice. Files of any type can be stored in your home directory. Can also be used from the command-line for greater productivity.
 
-## Usage
+![](docs/screenshot1.png)
 
-1. Clone this repository
-2. Run command: `python3 setup.py develop` to install app and its dependencies
-3. Once installed, run `clipbin --help` command for the help message and options:
+### Usage
 
-<!---->
+1. Clone this repo
+2. Set configuration:
+    1. Run `vi .env` in root of repo
+    2. Set your `home_dir` setting (can be any local directory of your choice): `home_dir=[DIRECTORY]`
+    3. Option configuration: `port` (defaults to 5000)
+3. Run command `python3 setup.py develop` to install
+4. Run command `clipbin --help` to see all options:
 
     Usage: clipbin [OPTIONS] COMMAND [ARGS]...
 
@@ -23,36 +27,8 @@ Simple and intuitive code snippet and clipboard manager. It will save any text o
       --help  Show this message and exit.
 
     Commands:
-      add-clip     Add a clip.
-      copy-clip    Copy clip to clipboard.
-      delete-clip  Delete clip.
-      edit-clip    Edit clip using content in SRC file.
-      list-all     List all clips in the database.
-      print-clip   Print clip.
-      save-clip    Save clip to file.
-      web          Launch web interface for ClipBin.
-
-## Example
-
-    > clipbin list-all
-
-    [35] Count Lines Of Code
-    [34] models.py
-    [33] .pre-commit-config.yaml
-    [25] beautifulsoup
-    [24] flask blueprints
-    [23] EasyMDE.js editor
-    [22] LICENSE.md
-    [21] __init__.py
-    [20] views.py
-    [19] main.css
-    [18] main.js
-    [17] index.html
-    [16] base.html
-    [15] config.py
-    [13] README.md
-    [10] setup.py
-    [8] cli.py
-    [6] flask crud fns
-    [5] flask login
-    [2] random color in python
+      copy2clipboard   Copy template to the clipboard.
+      copy2file        Copy template to file.
+      create-template  Create a template.
+      delete-template  Delete a template.
+      web              Launch web interface.

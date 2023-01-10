@@ -1,6 +1,6 @@
-from flask import current_app, render_template, request
+from flask import current_app, jsonify, render_template, request
 
-from clip_bin.models import Clip
+from clip_bin.models import Template
 
 
 @current_app.route("/")
@@ -8,54 +8,36 @@ def index():
     return render_template("index.html")
 
 
-@current_app.route("/create_clip", methods=["POST"])
-def create_clip():
-    clip_ = Clip(request.form.get("name"))
-    clip_.path.touch()
-    return ""
-
-
-@current_app.route("/get_clips")
-def get_clips():
-    return dict(clips=[i.to_dict() for i in Clip.all()])
-
-
-@current_app.route("/get_favorites")
-def get_favorites():
-    return dict(favorites=[i.to_dict() for i in Clip.favorites()])
-
-
-@current_app.route("/get_clip")
-def get_clip():
-    clip_ = Clip.get(request.args.get("name"))
-    return clip_.to_dict()
-
-
-@current_app.route("/edit_clip", methods=["POST"])
-def edit_clip():
-    clip_ = Clip.get(request.form.get("name"))
-    clip_.edit(request.form.get("content"))
+@current_app.route("/add_template", methods=["POST"])
+def add_template():
+    template_ = Template(request.form.get("name"))
+    template_.create()
 
     return ""
 
 
-@current_app.route("/delete_clip")
-def delete_clip():
-    clip_ = Clip.get(request.args.get("name"))
-    clip_.path.unlink()
+@current_app.route("/get_templates")
+def get_templates():
+    return dict(templates=[i.to_dict() for i in Template.all()])
+
+
+@current_app.route("/get_template")
+def get_template():
+    template_ = Template(request.args.get("name"))
+    return template_.to_dict()
+
+
+@current_app.route("/generate_template", methods=["POST"])
+def generate_template():
+    template_ = Template(request.form.get("name"))
+    input_ = [i.split("=")[1] for i in request.form.get("params").split("&")]
+
+    return template_.format_text(input_)
+
+
+@current_app.route("/delete_template")
+def delete_template():
+    template_ = Template(request.args.get("name"))
+    template_.delete()
 
     return ""
-
-
-@current_app.route("/toggle_favorite")
-def toggle_favorite():
-    clip_ = Clip.get(request.args.get("name"))
-    clip_.favorite()
-
-    return ""
-
-
-@current_app.route("/get_content")
-def get_content():
-    clip_ = Clip.get(request.args.get("name"))
-    return dict(name=clip_.name, content=clip_.content)

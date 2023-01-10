@@ -1,75 +1,66 @@
 import datetime
 import json
-from pathlib import Path
+
+from jinja2 import Environment, FileSystemLoader
 
 from clip_bin import config
 
+with open(config.HOME_DIR / "templates.json") as f:
+    data = json.load(f)
 
-class Clip(object):
-    def __init__(self, name: str):
+
+class Template(object):
+    def __init__(self, name):
         self.name = name
 
-    @property
-    def path(self) -> Path:
-        return config.HOME_DIR / "clips" / self.name
-
-    @property
-    def stem(self) -> str:
-        return self.path.stem
-
-    @property
-    def suffix(self) -> str:
-        return self.path.suffix
-
-    @property
-    def content(self) -> str:
-        return open(self.path).read()
-
-    @property
-    def last_modified(self) -> datetime.datetime:
-        return datetime.datetime.fromtimestamp(self.path.stat().st_birthtime)
-
-    @property
-    def favorited(self) -> bool:
-        return self.name in [i.name for i in Clip.favorites()]
-
     @classmethod
-    def all(cls) -> list:
+    def all(cls):
         return [
-            Clip(i.name) for i in (config.HOME_DIR / "clips").iterdir() if i.is_file()
+            Template(i.name)
+            for i in config.HOME_DIR.iterdir()
+            if i.is_file() and i.name != "templates.json"
         ]
 
-    @classmethod
-    def favorites(cls) -> list:
-        with open(config.HOME_DIR / "favorites.json") as favs:
-            data = json.load(favs)
-        return [Clip(i) for i in data]
+    @property
+    def variables(self):
+        _ = []
+        if self.name in data.keys():
+            for i in data[self.name]:
+                for j in i:
+                    _.append(j)
 
-    @classmethod
-    def get(cls, name: str):
-        return Clip(name)
+        return _
 
-    def edit(self, content: str):
-        open(self.path, "w").write(content)
+    @property
+    def content(self):
+        return open(config.HOME_DIR / self.name).read()
 
-    def favorite(self):
-        with open(config.HOME_DIR / "favorites.json") as favs:
-            data = json.load(favs)
-        if self.name in data:
-            data.remove(self.name)
-        else:
-            data.append(self.name)
+    @property
+    def date_created(self):
+        return datetime.datetime.fromtimestamp(
+            (config.HOME_DIR / self.name).stat().st_birthtime
+        )
 
-        with open((config.HOME_DIR / "favorites.json"), "w") as favs:
-            json.dump(data, favs)
+    def create(self):
+        (config.HOME_DIR / self.name).touch()
 
-    def to_dict(self) -> dict:
+    def delete(self):
+        (config.HOME_DIR / self.name).unlink()
+
+    def format_text(self, input_: list):
+        env = Environment(loader=FileSystemLoader(config.HOME_DIR))
+        template = env.get_template(self.name)
+
+        params = data
+        for idx, i in enumerate(self.variables):
+            params.update({i: input_[idx]})
+
+        return template.render(params)
+
+    def to_dict(self):
         return dict(
             name=self.name,
-            path=str(self.path),
-            stem=self.stem,
-            suffix=self.suffix,
             content=self.content,
-            favorited=self.favorited,
-            last_modified=self.last_modified.strftime("%-m/%-d/%y @ %-I:%M %p"),
+            variables=self.variables,
+            date_created=self.date_created.strftime("%-m/%-d/%y @ %-I:%M %p"),
         )
