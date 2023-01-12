@@ -5,8 +5,10 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/misterrager8/ClipBin)
 ![GitHub](https://img.shields.io/github/license/misterrager8/clipbin)
 
+## About
 Save important snippets of code or text that you commonly copy and paste. Locally-hosted and ran from your browser of choice. Files of any type can be stored in your home directory. Can also be used from the command-line for greater productivity.
 
+## Screenshots
 ![](docs/screenshot1.png)
 
 ### Usage
@@ -34,3 +36,13 @@ Save important snippets of code or text that you commonly copy and paste. Locall
       create-template  Create a template.
       delete-template  Delete a template.
       web              Launch web interface.
+
+## Built With
+- [Python](https://www.python.org/) - The programming language used
+- [PyQt5](https://pypi.org/project/PyQt5/) - A set of Python bindings for the Qt libraries
+
+## Author
+- **misterrager8** - [GitHub Profile](https://github.com/misterrager8)
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
