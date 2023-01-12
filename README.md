@@ -19,16 +19,16 @@ Save important snippets of code or text that you commonly copy and paste. Locall
 3. Run command `python3 setup.py develop` to install
 4. Run command `clipbin --help` to see all options:
 
-      Usage: clipbin [OPTIONS] COMMAND [ARGS]...
+    Usage: clipbin [OPTIONS] COMMAND [ARGS]...
 
-        ClipBin
+    ClipBin
 
-      Options:
-        --help  Show this message and exit.
+    Options:
+      --help  Show this message and exit.
 
-      Commands:
-        copy2clipboard   Copy template to the clipboard.
-        copy2file        Copy template to file.
-        create-template  Create a template.
-        delete-template  Delete a template.
-        web              Launch web interface.
+    Commands:
+      copy2clipboard   Copy template to the clipboard.
+      copy2file        Copy template to file.
+      create-template  Create a template.
+      delete-template  Delete a template.
+      web              Launch web interface.
