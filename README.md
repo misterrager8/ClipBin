@@ -19,6 +19,8 @@ Save important snippets of code or text that you commonly copy and paste. Locall
 3. Run command `python3 setup.py develop` to install
 4. Run command `clipbin --help` to see all options:
 
+<!--  -->
+
     Usage: clipbin [OPTIONS] COMMAND [ARGS]...
 
     ClipBin
