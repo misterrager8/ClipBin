@@ -38,8 +38,13 @@ Save important snippets of code or text that you commonly copy and paste. Locall
       web              Launch web interface.
 
 ## Built With
-- [Python](https://www.python.org/) - The programming language used
-- [PyQt5](https://pypi.org/project/PyQt5/) - A set of Python bindings for the Qt libraries
+- [click](https://github.com/pallets/click) - Command Line Interface Creation Kit
+- [Flask](https://github.com/pallets/flask) - A micro web framework written in Python
+- [Jinja2](https://github.com/pallets/jinja) - A modern and designer-friendly templating language for Python
+- [pyperclip](https://github.com/asweigart/pyperclip) - A cross-platform clipboard module for Python
+- [python-dotenv](https://github.com/theskumar/python-dotenv) - Add .env support to your django/flask apps
+- [setuptools](https://github.com/pypa/setuptools) - A library that helps you build and distribute Python packages
+- [pre-commit](https://github.com/pre-commit/pre-commit) - A framework for managing and maintaining multi-language pre-commit hooks
 
 ## Author
 - **misterrager8** - [GitHub Profile](https://github.com/misterrager8)
