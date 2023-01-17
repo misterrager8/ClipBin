@@ -5,7 +5,10 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/misterrager8/ClipBin)
 ![GitHub](https://img.shields.io/github/license/misterrager8/clipbin)
 
+## About
 Save important snippets (templates) of code or text that you commonly copy and paste. Locally-hosted and ran from your browser of choice. Files of any type can be stored in your home directory. Can also be used from the command-line for greater productivity.
+
+## Screenshots
 
 ![](docs/screenshot1.png)
 
@@ -58,3 +61,18 @@ All templates are stored in the home directory of your choosing. ClipBin uses Ji
       create-template  Create a template.
       delete-template  Delete a template.
       web              Launch web interface.
+
+## Built With
+- [click](https://github.com/pallets/click) - Command Line Interface Creation Kit
+- [Flask](https://github.com/pallets/flask) - A micro web framework written in Python
+- [Jinja2](https://github.com/pallets/jinja) - A modern and designer-friendly templating language for Python
+- [pyperclip](https://github.com/asweigart/pyperclip) - A cross-platform clipboard module for Python
+- [python-dotenv](https://github.com/theskumar/python-dotenv) - Add .env support to your django/flask apps
+- [setuptools](https://github.com/pypa/setuptools) - A library that helps you build and distribute Python packages
+- [pre-commit](https://github.com/pre-commit/pre-commit) - A framework for managing and maintaining multi-language pre-commit hooks
+
+## Author
+- **misterrager8** - [GitHub Profile](https://github.com/misterrager8)
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
