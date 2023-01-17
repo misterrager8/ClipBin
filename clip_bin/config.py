@@ -6,4 +6,4 @@ import dotenv
 dotenv.load_dotenv()
 
 HOME_DIR = Path(os.getenv("home_dir"))
-PORT = os.getenv("port")
+PORT = os.getenv("port") or "5000"

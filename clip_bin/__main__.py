@@ -14,15 +14,31 @@ def cli():
 
 
 @cli.command()
-def create_template():
+@click.option("--name", "-n", prompt=True, help="Name of your new template")
+@click.option(
+    "--file",
+    "-f",
+    type=click.Path(),
+    help="File to copy content from to make new template (optional)",
+)
+def create_template(name, file):
     """Create a template."""
-    pass
+    template_ = Template(name)
+    template_.create()
+
+    if file:
+        text_ = open(file).read()
+        open(config.HOME_DIR / template_.name, "w").write(text_)
+
+    click.secho("Template created.", fg="green")
 
 
 @cli.command()
-def delete_template():
+@click.option("--name", "-n", prompt=True, help="Name of template to delete")
+def delete_template(name):
     """Delete a template."""
-    pass
+    template_ = Template(name)
+    template_.delete()
 
 
 @cli.command()

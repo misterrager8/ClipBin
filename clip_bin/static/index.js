@@ -70,7 +70,26 @@ function copyText() {
     setTimeout(function() { $('#copy-btn').toggleClass(['bi-clipboard', 'bi-clipboard-check']); }, 1500);
 }
 
-const Template = (template_, id) => {
+function editTemplate(name) {
+    $.post('edit_template', {
+        name: name,
+        text: $('#content').val()
+    }, function(data) {
+        $('#saved').text('Saved.');
+        setTimeout(function() { $('#saved').text('Autosave: ON'); }, 1500);
+    });
+}
+
+function setVariables(name) {
+    $.post('set_variables', {
+        name: name,
+        variables: $('#vars').val()
+    }, function(data) {
+        
+    });
+}
+
+const Template = (template_, id, mode) => {
     $('div[id^="temp"]').removeClass('selected');
     $('#temp' + id).addClass('selected');
     $.get('/get_template', {
@@ -79,17 +98,26 @@ const Template = (template_, id) => {
         $('#template').html(`
             <div class="sticky-top">
                 <p class="heading fs-italic fs-3 mb-3">${data.name}</p>
-                <form ${data.variables.length === 0 && 'style="display:none"'} onsubmit="event.preventDefault(); generateTemplate('${template_}');" class="input-group input-group-sm mb-3" id="genForm">
-                    ${data.variables.map((x) => `<input required autocomplete="off" class="form-control" placeholder="${x}" name="${x}" required/>` ).join('')}
-                    <button type="submit" class="btn btn-outline-success">Generate</button>
-                </form>
                 <div class="btn-group btn-group-sm mb-3">
                     <a class="btn btn-outline-secondary" onclick="copyText()"><i class="bi bi-clipboard" id="copy-btn"></i> Copy</a>
-                    <a class="btn btn-outline-secondary" onclick=""><i class="bi bi-pen" id="copy-btn"></i> Edit</a>
+                    ${mode === 'view' ? `<a class="btn btn-outline-secondary" onclick="Template('${template_}', '${id}', 'edit')"><i class="bi bi-pen"></i> Edit</a>`:`
+                    <a class="btn btn-outline-secondary" onclick="Template('${template_}', '${id}', 'view')"><i class="bi bi-eye"></i> View</a>`}
                     <a class="btn btn-outline-danger" onclick="$('#delete').fadeToggle(150);"><i class="bi bi-trash2"></i> Delete</a>
                     <a id="delete" style="display:none" class="btn text-danger" onclick="deleteTemplate('${data.name}')">Delete?</a>
                 </div>
+                ${mode === 'view' ? `
+                <form ${data.variables.length === 0 && 'style="display:none"'} onsubmit="event.preventDefault(); generateTemplate('${template_}');" class="input-group input-group-sm mb-3" id="genForm">
+                    ${data.variables.map((x) => `<input autocomplete="off" class="form-control" placeholder="${x}" name="${x}"/>` ).join('')}
+                    <button type="submit" class="btn btn-outline-success">Generate</button>
+                </form>
                 <div style="white-space: pre-wrap; font-size: 0.9em;" id="content"></div>
+                ` : `
+                <div>
+                    <span id="saved" class="text-success heading">Autosave: ON</span>
+                    <input onchange="setVariables('${data.name}')" id="vars" autocomplete="off" class="form-control form-control-sm mt-3" value="${data.variables.join(',')}">
+                    <textarea onchange="editTemplate('${data.name}')" id="content" class="form-control form-control-sm mt-3" rows=30>${data.content}</textarea>
+                </div>
+                `}
             </div>
             `);
         $('#content').text(data.content);
@@ -102,7 +130,7 @@ const App = () => {
         for (let[id, x] of data.templates.entries()) {
             $('#templates').append(`
                 <div class="py-2 px-3" id="temp${id}">
-                    <a class="heading" onclick="Template('${x.name}', '${id}')">${x.name}</a><br>
+                    <a class="heading" onclick="Template('${x.name}', '${id}', 'view')">${x.name}</a><br>
                     <div class="text-muted fst-italic small"><i class="bi bi-plus-lg"></i> ${x.date_created}</div>
                 </div>
                 `);

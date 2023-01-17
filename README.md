@@ -5,9 +5,33 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/misterrager8/ClipBin)
 ![GitHub](https://img.shields.io/github/license/misterrager8/clipbin)
 
-Save important snippets of code or text that you commonly copy and paste. Locally-hosted and ran from your browser of choice. Files of any type can be stored in your home directory. Can also be used from the command-line for greater productivity.
+Save important snippets (templates) of code or text that you commonly copy and paste. Locally-hosted and ran from your browser of choice. Files of any type can be stored in your home directory. Can also be used from the command-line for greater productivity.
 
 ![](docs/screenshot1.png)
+
+### Functionality
+
+All templates are stored in the home directory of your choosing. ClipBin uses Jinja2 templating to generate strings with a list of variables to fill in the blanks. This allows you to use your snippets by just filling in the required variables (name, version, author, etc.), and a new file or string would be written to your clipboard or a new file. A list of all your templates and their associated variables are kept in the `templates.json` file of your home directory.
+
+**Example**
+
+    "README.md": [
+        {
+            "name": ""
+        },
+        {
+            "description": ""
+        },
+        {
+            "usage": ""
+        },
+        {
+            "author": ""
+        },
+        {
+            "license": ""
+        }
+    ]
 
 ### Usage
 
