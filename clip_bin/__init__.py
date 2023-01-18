@@ -6,6 +6,6 @@ def create_app(config):
     app.config.from_object(config)
 
     with app.app_context():
-        from clip_bin import views
+        from clip_bin import api
 
         return app

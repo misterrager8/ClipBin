@@ -1,6 +1,8 @@
 import webbrowser
+from pathlib import Path
 
 import click
+import dotenv
 import pyperclip
 
 from clip_bin import config, create_app
@@ -84,6 +86,19 @@ def copy2clipboard(src):
 
     pyperclip.copy(template_.format_text(input_))
     click.secho("Copied to clipboard.", fg="green")
+
+
+@cli.command()
+@click.option("--key", "-k", prompt=True)
+@click.option("--value", "-v", prompt=True)
+def set_config(key, value):
+    """Set a configuration option.
+    Args:
+        key (str): Name of the variable being set
+        value (str): Value of the variable being set
+    """
+    dotenv.set_key(Path(__file__).parent.parent / ".env", key, value)
+    click.secho(f"Config {key} set to {value}.", fg="green")
 
 
 @cli.command()

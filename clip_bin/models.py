@@ -25,11 +25,15 @@ class Template(object):
             [
                 Template(i.name)
                 for i in config.HOME_DIR.iterdir()
-                if i.is_file() and i.name != "templates.json" and i.name != ".DS_Store"
+                if i.is_file() and i.suffix == ".txt"
             ],
             key=lambda x: x.date_created,
             reverse=True,
         )
+
+    @property
+    def stem(self):
+        return (config.HOME_DIR / self.name).stem
 
     @property
     def variables(self):
@@ -69,7 +73,9 @@ class Template(object):
 
     def rename(self, new_name: str):
         """Rename a template."""
-        (config.HOME_DIR / self.name).rename(config.HOME_DIR / new_name)
+        (config.HOME_DIR / f"{self.name}.txt").rename(
+            config.HOME_DIR / f"{new_name}.txt"
+        )
 
     def set_variables(self, variables_: list):
         """Add or remove variables in a template.
@@ -102,6 +108,7 @@ class Template(object):
         """Dict representation of this template, for JSON compatibility."""
         return dict(
             name=self.name,
+            stem=self.stem,
             content=self.content,
             variables=self.variables,
             date_created=self.date_created.strftime("%-m/%-d/%y @ %-I:%M %p"),

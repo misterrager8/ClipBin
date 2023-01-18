@@ -1,21 +1,25 @@
+import os
 import urllib
+from pathlib import Path
 
+import dotenv
 from flask import current_app, jsonify, render_template, request
 
+from clip_bin import config
 from clip_bin.models import Template
 
 
 @current_app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", debug=current_app.config["DEBUG"])
 
 
 @current_app.route("/add_template", methods=["POST"])
 def add_template():
-    template_ = Template(request.form.get("name"))
+    template_ = Template(f"{request.form.get('name')}.txt")
     template_.create()
 
-    return ""
+    return template_.to_dict()
 
 
 @current_app.route("/edit_template", methods=["POST"])
@@ -71,3 +75,16 @@ def delete_template():
     template_.delete()
 
     return ""
+
+
+@current_app.route("/get_settings", methods=["POST", "GET"])
+def get_settings():
+    if request.method == "GET":
+        return dict(port=config.PORT, home_dir=str(config.HOME_DIR))
+    else:
+        config_file = Path(__file__).parent.parent / ".env"
+        dotenv.set_key(config_file, "port", request.form.get("port"))
+        dotenv.set_key(config_file, "home_dir", request.form.get("home_dir"))
+
+        os._exit(0)
+        return ""

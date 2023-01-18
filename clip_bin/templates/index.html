@@ -11,6 +11,9 @@
 	<title>ClipBin</title>
 </head>
 <body>
+	{% if debug %}
+	<div class="small text-muted fixed-top px-5 py-2"><i class="bi bi-bug-fill"></i> Debug Mode</div>
+	{% endif %}
 	<div class="p-5" id="root"></div>
 	<script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
 	<script src="static/index.js"></script>

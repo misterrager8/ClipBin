@@ -18,7 +18,8 @@ function addTemplate() {
     $.post('add_template', {
         name: $('#name').val()
     }, function(data) {
-        window.location.reload();
+        Template(data.name, 0, 'edit');
+        // window.location.reload();
     });
 }
 
@@ -82,6 +83,34 @@ function setVariables(name) {
     });
 }
 
+const Settings = () => {
+    $.get('/get_settings', function(data) {
+        $('#body').html(`
+            <a onclick="Home()" class="btn btn-sm text-secondary p-0 mb-3"><i class="bi bi-arrow-left"></i> Home</a>
+            <form class="col-4" onsubmit="event.preventDefault(); changeSettings();">
+                <div class="mb-3">
+                    <label for="port" class="small text-muted mb-1">Port</label>
+                    <input autocomplete="off" class="form-control form-control-sm" id="port" value="${data.port}">
+                </div>
+                <div class="mb-3">
+                    <label for="home_dir" class="small text-muted mb-1">Home Directory</label>
+                    <input autocomplete="off" class="form-control form-control-sm" id="home_dir" value="${data.home_dir}">
+                </div>
+                <button type="submit" class="btn btn-sm btn-outline-success w-100"><i class="bi bi-save2"></i> Apply Changes (Requires Restart)</button>
+            </form>
+            `);
+    });
+}
+
+function changeSettings() {
+    $.post('/get_settings', {
+        home_dir: $('#home_dir').val(),
+        port: $('#port').val()
+    }, function(data) {
+        window.location.reload();
+    });
+}
+
 const Template = (template_, id, mode) => {
     $('div[id^="temp"]').removeClass('selected');
     $('#temp' + id).addClass('selected');
@@ -90,7 +119,7 @@ const Template = (template_, id, mode) => {
     }, function(data) {
         $('#template').html(`
             <div class="sticky-top">
-            <input onchange="renameTemplate('${data.name}')" autocomplete="off" class="form-control border-0 p-0 fs-3 mb-3 heading" id="template-name" value="${data.name}">
+            <input onchange="renameTemplate('${data.stem}')" autocomplete="off" class="form-control border-0 p-0 fs-3 mb-3 heading" id="template-name" value="${data.stem}">
                 <div class="btn-group btn-group-sm mb-3">
                     <a class="btn btn-outline-secondary" onclick="copyText()"><i class="bi bi-clipboard" id="copy-btn"></i> Copy</a>
                     ${mode === 'view' ? `<a class="btn btn-outline-secondary" onclick="Template('${template_}', '${id}', 'edit')"><i class="bi bi-pen"></i> Edit</a>`:`
@@ -125,33 +154,39 @@ const Template = (template_, id, mode) => {
     });
 }
 
-const App = () => {
+const Home = () => {
     $.get('/get_templates', function(data) {
         $('#templates').html(`<div class="mb-3">${AddTemplateForm()}</div>`);
         for (let[id, x] of data.templates.entries()) {
             $('#templates').append(`
                 <div class="hover py-2 px-3" id="temp${id}">
-                    <a class="heading" onclick="Template('${x.name}', '${id}', 'view')">${x.name}</a><br>
+                    <a class="heading" onclick="Template('${x.name}', '${id}', 'view')">${x.stem}</a><br>
                     <div class="text-muted fst-italic small"><i class="bi bi-plus-lg"></i> ${x.date_created}</div>
                 </div>
                 `);
         }
     });
 
-    return `
-    <div>
+    $('#body').html(`
         <div class="row">
             <div class="col-3">
-                <div>
-                    <a onclick="changeTheme('light')" id="light" class="btn btn-sm btn-outline-light w-100"><i class="bi-sun-fill"></i> Light</a>
-                    <a onclick="changeTheme('dark')" id="dark" class="btn btn-sm btn-outline-dark w-100"><i class="bi-moon-fill"></i> Dark</a>
-                </div>
-                <div id="templates" class="mt-3"></div>
+                <div id="templates"></div>
             </div>
             <div id="template" class="col-9"></div>
         </div>
-    </div>
-    `;
+        `);
 }
 
-$('#root').html(App());
+const App = () => {
+    $('#root').html(`
+        <div class="">
+            <a onclick="changeTheme('light')" id="light" class="btn btn-sm btn-outline-light"><i class="bi-sun-fill"></i> Light</a>
+            <a onclick="changeTheme('dark')" id="dark" class="btn btn-sm btn-outline-dark"><i class="bi-moon-fill"></i> Dark</a>
+            <a onclick="Settings()" class="btn btn-sm btn-outline-secondary"><i class="bi-gear-fill"></i> Settings</a>
+        </div>
+        <div id="body" class="mt-3"></div>
+        `);
+    Home();
+}
+
+App();
