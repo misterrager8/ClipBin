@@ -26,6 +26,14 @@ def edit_template():
     return ""
 
 
+@current_app.route("/rename_template", methods=["POST"])
+def rename_template():
+    template_ = Template(request.form.get("name"))
+    template_.rename(request.form.get("new_name"))
+
+    return ""
+
+
 @current_app.route("/set_variables", methods=["POST"])
 def set_variables():
     template_ = Template(request.form.get("name"))

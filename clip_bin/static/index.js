@@ -1,19 +1,17 @@
 $(document).ready(function() {
-    localStorage.getItem('ClipBin') === 'dark' ? setDark() : setLight();
+    changeTheme(localStorage.getItem('ClipBin'));
 });
 
-function setDark() {
-    localStorage.setItem('ClipBin', 'dark');
-    document.documentElement.setAttribute('data-theme', localStorage.getItem('ClipBin'));
-    $('#dark').show();
-    $('#light').hide();
-}
-
-function setLight() {
-    localStorage.setItem('ClipBin', 'light');
-    document.documentElement.setAttribute('data-theme', localStorage.getItem('ClipBin'));
-    $('#light').show();
-    $('#dark').hide();
+function changeTheme(theme) {
+    localStorage.setItem('ClipBin', theme);
+    document.documentElement.setAttribute('data-theme', theme);
+    if (theme === 'light') {
+        $('#dark').show();
+        $('#light').hide();
+    } else {
+        $('#dark').hide();
+        $('#light').show();
+    }
 }
 
 function addTemplate() {
@@ -33,25 +31,10 @@ function deleteTemplate(name) {
 }
 
 const AddTemplateForm = () => `
-<form class="input-group input-group-sm" onsubmit="event.preventDefault(); addTemplate();">
-    <input required autocomplete="off" class="form-control border-success" id="name" placeholder="New Template">
-    <button type="submit" class="btn btn-outline-success"><i class="bi bi-plus-lg"></i></button>
+<form onsubmit="event.preventDefault(); addTemplate();">
+    <label class="small text-success" for="name"><i class="bi bi-plus-lg"></i> New Template</label>
+    <input required autocomplete="off" class="form-control form-control-sm border-success mt-1" id="name">
 </form>
-`;
-
-const Navbar = () => `
-<nav class="navbar navbar-expand-lg">
-    <div class="container-fluid">
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <div onclick="setLight()" id="dark" class="nav-link"><i class="bi-sun-fill"></i> Light</div>
-                    <div onclick="setDark()" id="light" class="nav-link"><i class="bi-moon-fill"></i> Dark</div>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
 `;
 
 function generateTemplate(name) {
@@ -75,8 +58,17 @@ function editTemplate(name) {
         name: name,
         text: $('#content').val()
     }, function(data) {
-        $('#saved').text('Saved.');
-        setTimeout(function() { $('#saved').text('Autosave: ON'); }, 1500);
+        $('#saved').toggleClass(['bi-braces-asterisk', 'bi-check-lg']);
+        setTimeout(function() { $('#saved').toggleClass(['bi-braces-asterisk', 'bi-check-lg']); }, 1500);
+    });
+}
+
+function renameTemplate(name) {
+    $.post('rename_template', {
+        name: name,
+        new_name: $('#template-name').val()
+    }, function(data) {
+        window.location.reload();
     });
 }
 
@@ -85,7 +77,8 @@ function setVariables(name) {
         name: name,
         variables: $('#vars').val()
     }, function(data) {
-        
+        $('#save-vars').toggleClass(['bi-input-cursor-text', 'bi-check-lg']);
+        setTimeout(function() { $('#save-vars').toggleClass(['bi-input-cursor-text', 'bi-check-lg']); }, 1500);
     });
 }
 
@@ -97,7 +90,7 @@ const Template = (template_, id, mode) => {
     }, function(data) {
         $('#template').html(`
             <div class="sticky-top">
-                <p class="heading fs-italic fs-3 mb-3">${data.name}</p>
+            <input onchange="renameTemplate('${data.name}')" autocomplete="off" class="form-control border-0 p-0 fs-3 mb-3 heading" id="template-name" value="${data.name}">
                 <div class="btn-group btn-group-sm mb-3">
                     <a class="btn btn-outline-secondary" onclick="copyText()"><i class="bi bi-clipboard" id="copy-btn"></i> Copy</a>
                     ${mode === 'view' ? `<a class="btn btn-outline-secondary" onclick="Template('${template_}', '${id}', 'edit')"><i class="bi bi-pen"></i> Edit</a>`:`
@@ -106,16 +99,24 @@ const Template = (template_, id, mode) => {
                     <a id="delete" style="display:none" class="btn text-danger" onclick="deleteTemplate('${data.name}')">Delete?</a>
                 </div>
                 ${mode === 'view' ? `
-                <form ${data.variables.length === 0 && 'style="display:none"'} onsubmit="event.preventDefault(); generateTemplate('${template_}');" class="input-group input-group-sm mb-3" id="genForm">
-                    ${data.variables.map((x) => `<input autocomplete="off" class="form-control" placeholder="${x}" name="${x}"/>` ).join('')}
-                    <button type="submit" class="btn btn-outline-success">Generate</button>
+                <form ${data.variables.length === 0 && 'style="display:none"'} onsubmit="event.preventDefault(); generateTemplate('${template_}');" class="row mb-3" id="genForm">
+                    ${data.variables.map((x) => `
+                        <div class="col-4 mb-3">
+                            <label class="small text-secondary">${x}</label>
+                            <input autocomplete="off" class="form-control form-control-sm mt-1" name="${x}"/>
+                        </div>
+                        ` ).join('')}
+                    <button type="submit" class="btn btn-sm btn-outline-success w-100 mx-2"><i class="bi bi-file-text"></i> Generate</button>
                 </form>
                 <div style="white-space: pre-wrap; font-size: 0.9em;" id="content"></div>
                 ` : `
                 <div>
-                    <span id="saved" class="text-success heading">Autosave: ON</span>
-                    <input onchange="setVariables('${data.name}')" id="vars" autocomplete="off" class="form-control form-control-sm mt-3" value="${data.variables.join(',')}">
-                    <textarea onchange="editTemplate('${data.name}')" id="content" class="form-control form-control-sm mt-3" rows=30>${data.content}</textarea>
+                    <div>
+                        <label class="small text-secondary mt-3"><i id="save-vars" class="bi bi-input-cursor-text"></i> Variables</label>
+                        <input onchange="setVariables('${data.name}')" id="vars" autocomplete="off" class="form-control form-control-sm mt-1" value="${data.variables.join(',')}">
+                    </div>
+                    <label class="small text-secondary mt-3"><i id="saved" class="bi bi-braces-asterisk"></i> Content</label>
+                    <textarea onchange="editTemplate('${data.name}')" id="content" class="form-control form-control-sm mt-1" rows=30>${data.content}</textarea>
                 </div>
                 `}
             </div>
@@ -129,7 +130,7 @@ const App = () => {
         $('#templates').html(`<div class="mb-3">${AddTemplateForm()}</div>`);
         for (let[id, x] of data.templates.entries()) {
             $('#templates').append(`
-                <div class="py-2 px-3" id="temp${id}">
+                <div class="hover py-2 px-3" id="temp${id}">
                     <a class="heading" onclick="Template('${x.name}', '${id}', 'view')">${x.name}</a><br>
                     <div class="text-muted fst-italic small"><i class="bi bi-plus-lg"></i> ${x.date_created}</div>
                 </div>
@@ -139,9 +140,14 @@ const App = () => {
 
     return `
     <div>
-        ${Navbar()}
-        <div class="row mt-3">
-            <div id="templates" class="col-3"></div>
+        <div class="row">
+            <div class="col-3">
+                <div>
+                    <a onclick="changeTheme('light')" id="light" class="btn btn-sm btn-outline-light w-100"><i class="bi-sun-fill"></i> Light</a>
+                    <a onclick="changeTheme('dark')" id="dark" class="btn btn-sm btn-outline-dark w-100"><i class="bi-moon-fill"></i> Dark</a>
+                </div>
+                <div id="templates" class="mt-3"></div>
+            </div>
             <div id="template" class="col-9"></div>
         </div>
     </div>

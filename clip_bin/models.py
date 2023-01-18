@@ -21,11 +21,15 @@ class Template(object):
     @classmethod
     def all(cls):
         """Get all templates."""
-        return [
-            Template(i.name)
-            for i in config.HOME_DIR.iterdir()
-            if i.is_file() and i.name != "templates.json" and i.name != ".DS_Store"
-        ]
+        return sorted(
+            [
+                Template(i.name)
+                for i in config.HOME_DIR.iterdir()
+                if i.is_file() and i.name != "templates.json" and i.name != ".DS_Store"
+            ],
+            key=lambda x: x.date_created,
+            reverse=True,
+        )
 
     @property
     def variables(self):
@@ -62,6 +66,10 @@ class Template(object):
     def edit(self, text_):
         """Edit the text content of a template."""
         open(config.HOME_DIR / self.name, "w").write(text_)
+
+    def rename(self, new_name: str):
+        """Rename a template."""
+        (config.HOME_DIR / self.name).rename(config.HOME_DIR / new_name)
 
     def set_variables(self, variables_: list):
         """Add or remove variables in a template.
