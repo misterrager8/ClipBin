@@ -1,90 +1,59 @@
-import os
-import urllib
-from pathlib import Path
+import datetime
 
-import dotenv
-from flask import current_app, jsonify, render_template, request
+from flask import current_app, render_template, request
 
-from clip_bin import config
-from clip_bin.models import Template
+from .models import Clip
 
 
-@current_app.route("/")
+@current_app.get("/")
 def index():
-    return render_template("index.html", debug=current_app.config["DEBUG"])
+    return render_template("index.html")
 
 
-@current_app.route("/add_template", methods=["POST"])
-def add_template():
-    template_ = Template(f"{request.form.get('name')}.txt")
-    template_.create()
+@current_app.get("/create_clip")
+def create_clip():
+    clip_ = Clip(str(datetime.datetime.now()) + ".txt")
+    clip_.create()
 
-    return template_.to_dict()
-
-
-@current_app.route("/edit_template", methods=["POST"])
-def edit_template():
-    template_ = Template(request.form.get("name"))
-    template_.edit(request.form.get("text"))
-
-    return ""
+    return clip_.to_dict()
 
 
-@current_app.route("/rename_template", methods=["POST"])
-def rename_template():
-    template_ = Template(request.form.get("name"))
-    template_.rename(request.form.get("new_name"))
-
-    return ""
+@current_app.get("/clips")
+def clips():
+    return dict(clips_=[i.to_dict() for i in Clip.all()])
 
 
-@current_app.route("/set_variables", methods=["POST"])
-def set_variables():
-    template_ = Template(request.form.get("name"))
-    vars_ = request.form.get("variables").split(",")
-    template_.set_variables([{i.strip(): ""} for i in vars_])
-
-    return ""
+@current_app.post("/search")
+def search():
+    return dict(results=[i.to_dict() for i in Clip.search(request.form.get("query"))])
 
 
-@current_app.route("/get_templates")
-def get_templates():
-    return dict(templates=[i.to_dict() for i in Template.all()])
+@current_app.get("/clip")
+def clip():
+    clip_ = Clip(request.args.get("name"))
+
+    return clip_.to_dict()
 
 
-@current_app.route("/get_template")
-def get_template():
-    template_ = Template(request.args.get("name"))
-    return template_.to_dict()
+@current_app.post("/rename_clip")
+def rename_clip():
+    clip_ = Clip(request.form.get("name"))
+    clip_.rename(request.form.get("new_name") + ".txt")
+
+    return Clip(request.form.get("new_name") + ".txt").to_dict()
 
 
-@current_app.route("/generate_template", methods=["POST"])
-def generate_template():
-    template_ = Template(request.form.get("name"))
-    input_ = [
-        urllib.parse.unquote(i.split("=")[1])
-        for i in request.form.get("params").split("&")
-    ]
-
-    return template_.format_text(input_)
-
-
-@current_app.route("/delete_template")
-def delete_template():
-    template_ = Template(request.args.get("name"))
-    template_.delete()
+@current_app.post("/edit_clip")
+def edit_clip():
+    clip_ = Clip(request.form.get("name"))
+    clip_.edit(request.form.get("content"))
 
     return ""
 
 
-@current_app.route("/get_settings", methods=["POST", "GET"])
-def get_settings():
-    if request.method == "GET":
-        return dict(port=config.PORT, home_dir=str(config.HOME_DIR))
-    else:
-        config_file = Path(__file__).parent.parent / ".env"
-        dotenv.set_key(config_file, "port", request.form.get("port"))
-        dotenv.set_key(config_file, "home_dir", request.form.get("home_dir"))
+@current_app.get("/delete_clip")
+def delete_clip():
+    clip_ = Clip(request.args.get("name"))
+    clip_.delete()
 
-        os._exit(0)
-        return ""
+    return ""

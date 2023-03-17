@@ -1,4 +1,5 @@
 ClipBin.egg-info/
 .env
-todos.json
+todos.txt
 *.pyc
+.DS_Store

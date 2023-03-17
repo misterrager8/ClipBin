@@ -1,12 +1,10 @@
 import webbrowser
-from pathlib import Path
 
 import click
-import dotenv
 import pyperclip
 
 from clip_bin import config, create_app
-from clip_bin.models import Template
+from clip_bin.models import Clip
 
 
 @click.group()
@@ -16,89 +14,43 @@ def cli():
 
 
 @cli.command()
-@click.option("--name", "-n", prompt=True, help="Name of your new template")
-@click.option(
-    "--file",
-    "-f",
-    type=click.Path(),
-    help="File to copy content from to make new template (optional)",
-)
-def create_template(name, file):
-    """Create a template."""
-    template_ = Template(name)
-    template_.create()
+@click.option("-n", "--name", help="Name of the new clip.", prompt=True)
+def create_clip(name):
+    """Create a new clip."""
+    clip_ = Clip(name + ".txt")
+    clip_.create()
 
-    if file:
-        text_ = open(file).read()
-        open(config.HOME_DIR / template_.name, "w").write(text_)
-
-    click.secho("Template created.", fg="green")
-
-
-@cli.command()
-@click.option("--name", "-n", prompt=True, help="Name of template to delete")
-def delete_template(name):
-    """Delete a template."""
-    template_ = Template(name)
-    template_.delete()
+    click.secho("Created.", fg="magenta")
 
 
 @cli.command()
 @click.option(
-    "-s",
-    "--src",
-    prompt="\n".join([i.name for i in Template.all()] + ["Source File"]),
-    help="Source file to copy",
+    "-n",
+    "--name",
+    help="Copy this clip.",
+    prompt="\n".join([i.stem for i in Clip.all()]),
 )
-@click.option(
-    "-d",
-    "--dest",
-    prompt=True,
-    type=click.Path(),
-    help="File to copy to (relative path)",
-)
-def copy2file(src, dest):
-    """Copy template to file."""
-    template_ = Template(src)
-    input_ = []
-    for i in template_.variables:
-        x = click.prompt(i)
-        input_.append(x)
+def copy_clip(name):
+    """Copy a clip to the clipboard."""
+    clip_ = Clip(name + ".txt")
+    pyperclip.copy(clip_.content)
 
-    open(dest, "w").write(template_.format_text(input_))
-    click.secho("Copied to file.", fg="green")
+    click.secho("Copied.", fg="magenta")
 
 
 @cli.command()
 @click.option(
-    "-s",
-    "--src",
-    prompt="\n".join([i.name for i in Template.all()] + ["Source File"]),
-    help="Source file to copy",
+    "-n",
+    "--name",
+    help="Delete this clip.",
+    prompt="\n".join([i.stem for i in Clip.all()]),
 )
-def copy2clipboard(src):
-    """Copy template to the clipboard."""
-    template_ = Template(src)
-    input_ = []
-    for i in template_.variables:
-        x = click.prompt(i)
-        input_.append(x)
+def delete_clip(name):
+    """Delete a clip."""
+    clip_ = Clip(name + ".txt")
+    clip_.delete()
 
-    pyperclip.copy(template_.format_text(input_))
-    click.secho("Copied to clipboard.", fg="green")
-
-
-@cli.command()
-@click.option("--key", "-k", prompt=True)
-@click.option("--value", "-v", prompt=True)
-def set_config(key, value):
-    """Set a configuration option.
-    Args:
-        key (str): Name of the variable being set
-        value (str): Value of the variable being set
-    """
-    dotenv.set_key(Path(__file__).parent.parent / ".env", key, value)
-    click.secho(f"Config {key} set to {value}.", fg="green")
+    click.secho("Deleted.", fg="magenta")
 
 
 @cli.command()
