@@ -3,3 +3,4 @@ ClipBin.egg-info/
 todos.txt
 *.pyc
 .DS_Store
+.vscode/

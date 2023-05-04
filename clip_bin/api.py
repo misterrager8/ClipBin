@@ -12,7 +12,7 @@ def index():
 
 @current_app.get("/create_clip")
 def create_clip():
-    clip_ = Clip(str(datetime.datetime.now()) + ".txt")
+    clip_ = Clip(f"Clip {datetime.datetime.now().strftime('%H%M%S')}.txt")
     clip_.create()
 
     return clip_.to_dict()
@@ -20,7 +20,7 @@ def create_clip():
 
 @current_app.get("/clips")
 def clips():
-    return dict(clips_=[i.to_dict() for i in Clip.all()])
+    return {"clips": [i.to_dict() for i in Clip.all()]}
 
 
 @current_app.post("/search")
@@ -48,7 +48,7 @@ def edit_clip():
     clip_ = Clip(request.form.get("name"))
     clip_.edit(request.form.get("content"))
 
-    return ""
+    return clip_.to_dict()
 
 
 @current_app.get("/delete_clip")
@@ -57,3 +57,11 @@ def delete_clip():
     clip_.delete()
 
     return ""
+
+
+@current_app.get("/toggle_favorite")
+def toggle_favorite():
+    clip_ = Clip(request.args.get("name"))
+    clip_.toggle_favorite()
+
+    return clip_.to_dict()
