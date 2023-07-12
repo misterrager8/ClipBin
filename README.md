@@ -15,7 +15,6 @@ Save important snippets (templates) of code or text that you commonly copy and p
 
 <pre>
     home_dir=[HOME DIRECTORY]
-    port=[Optional, '5000' by default]
 </pre>
 
 5. Run `clipbin web` to start web interface or `clipbin --help` for command-line options.

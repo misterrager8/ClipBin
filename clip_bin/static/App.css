@@ -2,11 +2,29 @@
 html[data-theme="light"] {
   --primary-bg: #cccccc;
   --primary-txt: #1a1a1a;
+  --btn-color: #1a1a1a;
+  --btn-hover-txt: #cccccc;
 }
 
 html[data-theme="dark"] {
   --primary-bg: #1a1a1a;
   --primary-txt: #cccccc;
+  --btn-color: #cccccc;
+  --btn-hover-txt: #1a1a1a;
+}
+
+html[data-theme="daft"] {
+  --primary-bg: #29335c;
+  --primary-txt: #9199bc;
+  --btn-color: #e4572e;
+  --btn-hover-txt: #ffc0ad;
+}
+
+html[data-theme="unknown"] {
+  --primary-bg: #071e22;
+  --primary-txt: #91b6bd;
+  --btn-color: #df9a57;
+  --btn-hover-txt: #3a220b;
 }
 
 a,
@@ -16,64 +34,70 @@ a:hover {
   cursor: pointer;
 }
 
-body,
-.form-control,
-.form-control:focus,
-nav,
-.dropdown-item,
-.dropdown-menu {
+body {
   background-color: var(--primary-bg);
   color: var(--primary-txt);
 }
 
-.heading,
-.btn,
-.badge,
-label,
-::placeholder {
-  letter-spacing: 1px;
+.btn {
+  border-color: var(--btn-color);
+  color: var(--btn-color);
+  background-color: transparent;
+  letter-spacing: 2px;
 }
 
-.form-control {
-  border: 1px solid;
+.btn:hover {
+  background-color: var(--btn-color);
+  color: var(--btn-hover-txt);
 }
 
-::placeholder {
-  color: inherit !important;
-  opacity: 50% !important;
-}
-
-.selected,
-.clip-item:hover {
-  background-color: var(--primary-txt);
-  color: var(--primary-bg);
-}
-
-.text-secondary {
-  color: var(--primary-txt) !important;
-}
-
-.btn-outline-secondary,
-.dropdown-menu {
+.form-control,
+.form-control:focus {
+  border-color: var(--btn-color);
+  background-color: transparent;
   color: var(--primary-txt);
-  border-color: var(--primary-txt);
 }
 
-.btn-outline-secondary:hover,
-.btn-outline-secondary.active,
-.dropdown-item:hover {
-  background-color: var(--primary-txt);
-  color: var(--primary-bg);
-  border-color: var(--primary-txt);
-}
-
-.clip-item {
-  padding: 3px 15px;
-  letter-spacing: 1px;
-  margin: 3px 0px;
-  border-radius: 5px;
+::placeholder {
+  color: var(--btn-color);
+  opacity: 75%;
 }
 
 .text-warning {
   color: darkorange !important;
+}
+
+.clip-item {
+  padding: 0.25rem 1rem;
+  border-radius: 5px;
+  margin-bottom: 0.5rem;
+}
+
+.selected,
+.clip-item:hover {
+  background-color: var(--btn-color);
+  color: white;
+}
+
+.font {
+  letter-spacing: 1px;
+}
+
+.dropdown-menu {
+  background-color: var(--primary-bg);
+  color: var(--primary-txt);
+  border: 1px solid var(--btn-color);
+  border-radius: 5px;
+  text-align: center;
+}
+
+.dropdown-item {
+  color: var(--btn-color);
+}
+
+.input-group-text {
+  background-color: var(--primary-bg);
+  color: var(--primary-txt);
+  border: 0;
+  letter-spacing: 1px;
 }

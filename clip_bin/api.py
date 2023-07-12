@@ -10,7 +10,7 @@ def index():
     return render_template("index.html")
 
 
-@current_app.get("/create_clip")
+@current_app.post("/create_clip")
 def create_clip():
     clip_ = Clip(f"Clip {datetime.datetime.now().strftime('%H%M%S')}.txt")
     clip_.create()
@@ -18,50 +18,50 @@ def create_clip():
     return clip_.to_dict()
 
 
-@current_app.get("/clips")
+@current_app.post("/clips")
 def clips():
     return {"clips": [i.to_dict() for i in Clip.all()]}
 
 
 @current_app.post("/search")
 def search():
-    return dict(results=[i.to_dict() for i in Clip.search(request.form.get("query"))])
+    return dict(results=[i.to_dict() for i in Clip.search(request.json.get("query"))])
 
 
-@current_app.get("/clip")
+@current_app.post("/clip")
 def clip():
-    clip_ = Clip(request.args.get("name"))
+    clip_ = Clip(request.json.get("name"))
 
     return clip_.to_dict()
 
 
 @current_app.post("/rename_clip")
 def rename_clip():
-    clip_ = Clip(request.form.get("name"))
-    clip_.rename(request.form.get("new_name") + ".txt")
+    clip_ = Clip(request.json.get("name"))
+    clip_.rename(request.json.get("new_name") + ".txt")
 
-    return Clip(request.form.get("new_name") + ".txt").to_dict()
+    return Clip(request.json.get("new_name") + ".txt").to_dict()
 
 
 @current_app.post("/edit_clip")
 def edit_clip():
-    clip_ = Clip(request.form.get("name"))
-    clip_.edit(request.form.get("content"))
+    clip_ = Clip(request.json.get("name"))
+    clip_.edit(request.json.get("content"))
 
     return clip_.to_dict()
 
 
-@current_app.get("/delete_clip")
+@current_app.post("/delete_clip")
 def delete_clip():
-    clip_ = Clip(request.args.get("name"))
+    clip_ = Clip(request.json.get("name"))
     clip_.delete()
 
-    return ""
+    return {"status": "done"}
 
 
-@current_app.get("/toggle_favorite")
+@current_app.post("/toggle_favorite")
 def toggle_favorite():
-    clip_ = Clip(request.args.get("name"))
+    clip_ = Clip(request.json.get("name"))
     clip_.toggle_favorite()
 
     return clip_.to_dict()

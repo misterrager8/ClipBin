@@ -4,4 +4,3 @@ pyperclip==1.8.2
 python-dotenv==1.0.0
 python_frontmatter==1.0.0
 setuptools==63.1.0
-pre-commit

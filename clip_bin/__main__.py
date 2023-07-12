@@ -55,9 +55,15 @@ def delete_clip(name):
 
 @cli.command()
 @click.option("-d", "--debug", is_flag=True, help="Run in development mode")
-def web(debug):
+@click.option(
+    "-p",
+    "--port",
+    help="4-digit port number to run on. Default is 5000",
+    default="5000",
+)
+def web(debug, port):
     """Launch web interface."""
     app = create_app(config)
     if not debug:
-        webbrowser.open(f"http://localhost:{config.PORT}")
-    app.run(debug=debug, port=config.PORT)
+        webbrowser.open(f"http://localhost:{port}")
+    app.run(debug=debug, port=port)
