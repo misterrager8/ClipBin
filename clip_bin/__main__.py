@@ -1,3 +1,5 @@
+import pathlib
+import subprocess
 import webbrowser
 
 import click
@@ -14,8 +16,8 @@ def cli():
 
 
 @cli.command()
-@click.option("-n", "--name", help="Name of the new clip.", prompt=True)
-def create_clip(name):
+@click.argument("name")
+def add(name):
     """Create a new clip."""
     clip_ = Clip(name + ".txt")
     clip_.create()
@@ -24,15 +26,76 @@ def create_clip(name):
 
 
 @cli.command()
+@click.argument("file", type=click.Path())
+def add_from_file(file):
+    """Create a new clip from a file."""
+    src = pathlib.Path(file)
+    clip_ = Clip(f"{src.stem}-{src.suffix.strip('.')}.txt")
+    clip_.create()
+    clip_.edit(open(src).read())
+
+    click.secho("Created.", fg="magenta")
+
+
+@cli.command()
+@click.argument("name")
+def add_with(name):
+    """Create a new clip with content."""
+    subprocess.run(["vi", (config.HOME_DIR / f"{name}.txt")])
+
+    click.secho("Created.", fg="magenta")
+
+
+@cli.command()
+def view_all():
+    """View a list of clips."""
+    click.secho(
+        "\n".join([f"[{id}] {i.stem}" for id, i in enumerate(Clip.all())]),
+        fg="magenta",
+    )
+
+
+@cli.command()
+@click.option(
+    "--id",
+    help="View contents of this clip.",
+    prompt="\n".join([f"[{id}] {i.stem}" for id, i in enumerate(Clip.all())]) + "\n",
+)
+def view(id):
+    """View contents of this clip."""
+    clip_ = Clip.all()[int(id)]
+
+    click.secho(clip_.content, fg="magenta")
+
+
+@cli.command()
+@click.option(
+    "--id",
+    prompt="\n".join([f"[{id}] {i.stem}" for id, i in enumerate(Clip.all())]) + "\n",
+)
 @click.option(
     "-n",
     "--name",
-    help="Copy this clip.",
-    prompt="\n".join([i.stem for i in Clip.all()]),
+    help="New name of the clip.",
+    prompt=True,
 )
-def copy_clip(name):
+def rename(id, name):
+    """Rename this clip."""
+    clip_ = Clip.all()[int(id)]
+    clip_.rename(name + ".txt")
+
+    click.secho("Renamed.", fg="magenta")
+
+
+@cli.command()
+@click.option(
+    "--id",
+    help="Copy this clip.",
+    prompt="\n".join([f"[{id}] {i.stem}" for id, i in enumerate(Clip.all())]) + "\n",
+)
+def copy(id):
     """Copy a clip to the clipboard."""
-    clip_ = Clip(name + ".txt")
+    clip_ = Clip.all()[int(id)]
     pyperclip.copy(clip_.content)
 
     click.secho("Copied.", fg="magenta")
@@ -40,14 +103,13 @@ def copy_clip(name):
 
 @cli.command()
 @click.option(
-    "-n",
-    "--name",
+    "--id",
     help="Delete this clip.",
-    prompt="\n".join([i.stem for i in Clip.all()]),
+    prompt="\n".join([f"[{id}] {i.stem}" for id, i in enumerate(Clip.all())]) + "\n",
 )
-def delete_clip(name):
+def delete(id):
     """Delete a clip."""
-    clip_ = Clip(name + ".txt")
+    clip_ = Clip.all()[int(id)]
     clip_.delete()
 
     click.secho("Deleted.", fg="magenta")

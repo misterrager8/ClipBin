@@ -108,6 +108,7 @@ function Editor() {
         content: document.getElementById("content").value,
       },
       function (data) {
+        getClips();
         setCurrentClip(data);
         setSaved(true);
         setTimeout(function () {
