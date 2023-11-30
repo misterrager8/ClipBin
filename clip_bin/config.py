@@ -1,16 +1,19 @@
 import os
 from pathlib import Path
 
-import click
 import dotenv
 
 dotenv.load_dotenv()
 
-HOME_DIR = Path.cwd() / "clips"
+HOME_DIR = Path(os.getenv("home_dir"))
+PORT = os.getenv("port") or "9998"
+CLI_COLOR = os.getenv("cli_color") or "green"
+EDITOR = os.getenv("editor") or "vi"
 
-try:
-    HOME_DIR = Path(os.getenv("home_dir"))
-except:
-    if not HOME_DIR.exists():
-        HOME_DIR.mkdir()
-    click.secho("no home dir set. using cwd", fg="blue")
+
+def get():
+    return dotenv.dotenv_values()
+
+
+def set(key, value):
+    dotenv.set_key(dotenv.find_dotenv(), key, value)

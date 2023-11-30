@@ -1,52 +1,35 @@
 import datetime
+from pathlib import Path
 
 import frontmatter
 
-from . import config
+from clip_bin import config
 
 
-class Clip(object):
-    def __init__(self, name):
-        self.name = name
+def check_duplicate(name: str, list_of_names: list) -> str:
+    """Check if a filename is found. If true, return filename with an int appended to the end. Return original name if false."""
+    name = name.strip()
+    if name in list_of_names:
+        if (name[-1]).isdigit():
+            num = int(name[-1])
+            return check_duplicate(name[:-1] + f"{str(num + 1)}", list_of_names)
+        else:
+            return check_duplicate(f"{name} 2", list_of_names)
+    else:
+        return name
 
-    @classmethod
-    def all(cls):
-        return sorted(
-            [Clip(i.name) for i in config.HOME_DIR.glob("**/*.txt")],
-            key=lambda x: x.favorited,
-            reverse=True,
-        )
 
-    @classmethod
-    def search(cls, query):
-        return sorted(
-            [
-                Clip(i.name)
-                for i in config.HOME_DIR.glob("**/*.txt")
-                if query.lower() in i.name.lower()
-            ],
-            key=lambda x: x.last_modified,
-            reverse=True,
-        )
-
-    @property
-    def path(self):
-        return config.HOME_DIR / self.name
-
-    @property
-    def stem(self):
-        return self.path.stem
+class Clip:
+    def __init__(self, path):
+        self.path = Path(path)
 
     @property
     def frontmatter(self):
-        text_ = open(self.path).read()
-        frontmatter_ = frontmatter.loads(text_)
+        _ = frontmatter.load(self.path)
+        if not frontmatter.check(self.path):
+            _.metadata.update({"favorited": False})
 
-        if not frontmatter.checks(text_):
-            frontmatter_.metadata.update({"favorited": False})
-            open(self.path, "w").write(frontmatter.dumps(frontmatter_))
-
-        return frontmatter_
+        return _
 
     @property
     def content(self):
@@ -54,44 +37,60 @@ class Clip(object):
 
     @property
     def favorited(self):
-        return self.frontmatter.metadata.get("favorited")
+        return self.frontmatter.metadata.get("favorited") or False
+
+    @property
+    def name(self):
+        return self.path.stem
 
     @property
     def date_created(self) -> datetime.datetime:
         return datetime.datetime.fromtimestamp(self.path.stat().st_birthtime)
 
-    @property
-    def last_modified(self) -> datetime.datetime:
-        return datetime.datetime.fromtimestamp(self.path.stat().st_mtime)
-
-    def create(self):
+    def add(self):
         self.path.touch()
+
+    def edit_frontmatter(self, metadata: dict):
+        new_data = frontmatter.dumps(metadata)
+        open(self.path, "w").write(new_data)
+
+    @classmethod
+    def all(cls):
+        return sorted(
+            [Clip(i) for i in config.HOME_DIR.glob("**/*.txt")],
+            reverse=True,
+            key=lambda x: (x.favorited, x.date_created),
+        )
+
+    @classmethod
+    def search(cls, query):
+        return [i for i in Clip.all() if query.lower() in i.name.lower()]
 
     def edit(self, content: str):
         _ = self.frontmatter
         _.content = content
-
-        open(self.path, "w").write(frontmatter.dumps(_))
+        self.edit_frontmatter(_)
 
     def rename(self, new_name: str):
-        self.path.rename(config.HOME_DIR / new_name)
+        new_path = config.HOME_DIR / f"{new_name}.txt"
+        self.path.rename(new_path)
+        return Clip(new_path)
 
     def toggle_favorite(self):
         _ = self.frontmatter
         _.metadata.update({"favorited": not _.metadata.get("favorited")})
-
-        open(self.path, "w").write(frontmatter.dumps(_))
+        self.edit_frontmatter(_)
 
     def delete(self):
         self.path.unlink()
 
+    def __str__(self):
+        return f"{'*' if self.favorited else ' '} {self.name}"
+
     def to_dict(self):
-        return dict(
-            name=self.name,
-            path=str(self.path),
-            stem=self.stem,
-            content=self.content,
-            favorited=self.favorited,
-            date_created=self.date_created.strftime("%-m-%-d-%Y @ %I:%M %p"),
-            last_modified=self.last_modified.strftime("%-m-%-d-%Y @ %I:%M %p"),
-        )
+        return {
+            "name": self.name,
+            "path": str(self.path),
+            "content": self.content,
+            "favorited": self.favorited,
+        }
