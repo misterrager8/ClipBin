@@ -5,10 +5,10 @@ import dotenv
 
 dotenv.load_dotenv()
 
-HOME_DIR = Path(os.getenv("home_dir"))
-PORT = os.getenv("port") or "9998"
-CLI_COLOR = os.getenv("cli_color") or "green"
-EDITOR = os.getenv("editor") or "vi"
+PORT = os.getenv("port") or "4999"
+HOME_DIR = Path(os.getenv("home_dir") or (Path(__file__).parent / "clips"))
+
+HOME_DIR.mkdir(exist_ok=True)
 
 
 def get():

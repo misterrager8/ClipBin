@@ -1,9 +1,9 @@
 import setuptools
 
 setuptools.setup(
-    name="ClipBin",
-    version="3.5.0",
+    name="clipbin",
+    version="2024.02.26",
     long_description=open("README.md").read(),
     license=open("LICENSE.md").read(),
-    entry_points={"console_scripts": ["clipbin=clip_bin.__main__:cli"]},
+    entry_points={"console_scripts": ["clipbin=clipbin.__main__:cli"]},
 )
