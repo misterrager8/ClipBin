@@ -1,4 +1,5 @@
 from pathlib import Path
+
 import click
 from flask import current_app, render_template, request
 
@@ -32,7 +33,7 @@ def add_clip():
     clip_ = None
 
     try:
-        clip_ = Clip.add("new clip")
+        clip_ = Clip.add()
     except Exception as e:
         success = False
         click.secho(str(e), fg="blue")
@@ -61,11 +62,27 @@ def edit_clip():
     try:
         clip_ = Clip(request.json.get("path"))
         clip_.edit(request.json.get("content"))
+        clip_.edit_metadata(request.json.get("metadata"))
     except Exception as e:
         success = False
         click.secho(str(e), fg="blue")
 
     return {"success": success}
+
+
+@current_app.post("/rename_clip")
+def rename_clip():
+    success = True
+    clip_ = None
+
+    try:
+        clip_ = Clip(request.json.get("path"))
+        clip_ = clip_.rename(request.json.get("new_name"))
+    except Exception as e:
+        success = False
+        click.secho(str(e), fg="blue")
+
+    return {"success": success, "clip": clip_.asdict()}
 
 
 @current_app.post("/delete_clip")
@@ -80,3 +97,18 @@ def delete_clip():
         click.secho(str(e), fg="blue")
 
     return {"success": success}
+
+
+@current_app.post("/format_clip")
+def format_clip():
+    success = True
+
+    try:
+        clip_ = Clip(request.json.get("path"))
+        x = clip_.format_text()
+        # click.secho(x, fg="blue")
+    except Exception as e:
+        success = False
+        click.secho(str(e), fg="blue")
+
+    return {"success": success, "formatted": x}

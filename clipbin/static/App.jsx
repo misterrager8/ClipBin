@@ -171,10 +171,15 @@ function ClipEditor({ className }) {
   const onChangeName = (e) => setName(e.target.value);
   const onChangeContent = (e) => setContent(e.target.value);
 
+  const [metadata, setMetadata] = React.useState("");
+  const onChangeMetadata = (e) => setMetadata(e.target.value);
+
   React.useEffect(() => {
     if (multiCtx.currentClip.length !== 0) {
       setName(multiCtx.currentClip.name);
       setContent(multiCtx.currentClip.content);
+      setMetadata(JSON.stringify(multiCtx.currentClip.metadata));
+      multiCtx.setFormatted("");
     }
   }, [multiCtx.currentClip]);
 
@@ -185,9 +190,16 @@ function ClipEditor({ className }) {
           className="border-0"
           icon={saved ? "check-lg" : "floppy2"}
           onClick={() => {
-            multiCtx.editClip(multiCtx.currentClip.path, content);
+            multiCtx.editClip(multiCtx.currentClip.path, content, metadata);
             setSaved(true);
             setTimeout(() => setSaved(false), 1500);
+          }}
+        />
+        <Button
+          className="border-0"
+          icon={"circle"}
+          onClick={() => {
+            multiCtx.formatClip(multiCtx.currentClip.path);
           }}
         />
         <Button
@@ -207,17 +219,44 @@ function ClipEditor({ className }) {
             icon="question-lg"
           />
         )}
-        <Input
-          value={name}
-          onChange={onChangeName}
-          className="border-0 fst-italic"
-        />
+        <form
+          onSubmit={(e) =>
+            multiCtx.renameClip(e, multiCtx.currentClip.path, name)
+          }>
+          <Input
+            value={name}
+            onChange={onChangeName}
+            className="border-0 fst-italic"
+          />
+        </form>
       </InputGroup>
       <hr />
-      <textarea
-        value={content}
-        onChange={onChangeContent}
-        className="form-control form-control-sm h-100 border-0"></textarea>
+      <div className="row" style={{ height: "500px" }}>
+        <div className="col">
+          <textarea
+            value={content}
+            onChange={onChangeContent}
+            className="form-control form-control-sm h-100"
+            rows={20}></textarea>
+        </div>
+        <div className="col">
+          <textarea
+            value={metadata}
+            onChange={onChangeMetadata}
+            className="form-control form-control-sm h-100"
+            rows={20}></textarea>
+        </div>
+        <div className="col">
+          <div
+            style={{
+              whiteSpace: "pre-wrap",
+              overflowY: "auto",
+              height: "100%",
+            }}>
+            {multiCtx.formatted}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -386,6 +425,8 @@ function App() {
   const [clips, setClips] = React.useState([]);
   const [currentClip, setCurrentClip] = React.useState([]);
 
+  const [formatted, setFormatted] = React.useState([]);
+
   const addClip = () => {
     api("add_clip", {}, (data) => {
       getClips();
@@ -401,11 +442,23 @@ function App() {
     });
   };
 
-  const editClip = (path, content) => {
+  const editClip = (path, content, metadata) => {
     setLoading(true);
-    api("edit_clip", { path: path, content: content }, (data) =>
-      setLoading(false)
+    api(
+      "edit_clip",
+      { path: path, content: content, metadata: metadata },
+      (data) => setLoading(false)
     );
+  };
+
+  const renameClip = (e, path, newName) => {
+    e.preventDefault();
+    setLoading(true);
+    api("rename_clip", { path: path, new_name: newName }, (data) => {
+      getClips();
+      setCurrentClip(data.clip);
+      setLoading(false);
+    });
   };
 
   const deleteClip = (path) => {
@@ -420,6 +473,10 @@ function App() {
     navigator.clipboard.writeText(content);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
+  };
+
+  const formatClip = (path) => {
+    api("format_clip", { path: path }, (data) => setFormatted(data.formatted));
   };
 
   const contextValue = {
@@ -440,6 +497,10 @@ function App() {
     copyClip: copyClip,
     copied: copied,
     setCopied: setCopied,
+    formatClip: formatClip,
+    formatted: formatted,
+    setFormatted: setFormatted,
+    renameClip: renameClip,
   };
 
   React.useEffect(() => {
