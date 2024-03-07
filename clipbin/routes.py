@@ -102,6 +102,7 @@ def delete_clip():
 @current_app.post("/format_clip")
 def format_clip():
     success = True
+    x = None
 
     try:
         clip_ = Clip(request.json.get("path"))

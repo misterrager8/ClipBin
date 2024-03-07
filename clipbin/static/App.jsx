@@ -139,7 +139,7 @@ function ClipItem({ item, className }) {
       }>
       <a
         onClick={() => multiCtx.setCurrentClip(item)}
-        className="text-truncate">
+        className="fw-bold text-truncate">
         {item.name}
       </a>
       <ButtonGroup size="sm">
@@ -178,73 +178,81 @@ function ClipEditor({ className }) {
     if (multiCtx.currentClip.length !== 0) {
       setName(multiCtx.currentClip.name);
       setContent(multiCtx.currentClip.content);
-      setMetadata(JSON.stringify(multiCtx.currentClip.metadata));
+      setMetadata(JSON.stringify(multiCtx.currentClip.metadata, undefined, 2));
       multiCtx.setFormatted("");
     }
   }, [multiCtx.currentClip]);
 
   return (
     <div className={className + " px-1"}>
-      <InputGroup size="sm" className="mb-3">
-        <Button
-          className="border-0"
-          icon={saved ? "check-lg" : "floppy2"}
-          onClick={() => {
-            multiCtx.editClip(multiCtx.currentClip.path, content, metadata);
-            setSaved(true);
-            setTimeout(() => setSaved(false), 1500);
-          }}
-        />
-        <Button
-          className="border-0"
-          icon={"circle"}
-          onClick={() => {
-            multiCtx.formatClip(multiCtx.currentClip.path);
-          }}
-        />
-        <Button
-          onClick={() => multiCtx.copyClip(content)}
-          className="border-0"
-          icon={"clipboard" + (multiCtx.copied ? "-check" : "")}
-        />
-        <Button
-          className="border-0"
-          icon="trash2"
-          onClick={() => setDeleting(!deleting)}
-        />
-        {deleting && (
-          <Button
-            onClick={() => multiCtx.deleteClip(multiCtx.currentClip.path)}
-            className="border-0"
-            icon="question-lg"
-          />
-        )}
+      <InputGroup size="sm" className="mb-2">
         <form
+          className="input-group input-group-sm"
           onSubmit={(e) =>
             multiCtx.renameClip(e, multiCtx.currentClip.path, name)
           }>
+          <Button
+            type_="button"
+            className="border-0"
+            icon={saved ? "check-lg" : "floppy2"}
+            onClick={() => {
+              multiCtx.editClip(multiCtx.currentClip.path, content, metadata);
+              setSaved(true);
+              setTimeout(() => setSaved(false), 1500);
+            }}
+          />
+          <Button
+            type_="button"
+            className="border-0"
+            icon={"braces-asterisk"}
+            onClick={() => {
+              multiCtx.formatClip(multiCtx.currentClip.path);
+            }}
+          />
+          <Button
+            type_="button"
+            onClick={() =>
+              multiCtx.copyClip(
+                multiCtx.formatted.length !== 0 ? multiCtx.formatted : content
+              )
+            }
+            className="border-0"
+            icon={"clipboard" + (multiCtx.copied ? "-check" : "")}
+          />
+          <Button
+            type_="button"
+            className="border-0"
+            icon="trash2"
+            onClick={() => setDeleting(!deleting)}
+          />
+          {deleting && (
+            <Button
+              type_="button"
+              onClick={() => multiCtx.deleteClip(multiCtx.currentClip.path)}
+              className="border-0"
+              icon="question-lg"
+            />
+          )}
           <Input
             value={name}
             onChange={onChangeName}
-            className="border-0 fst-italic"
+            className="border-0 fw-bold"
           />
         </form>
       </InputGroup>
-      <hr />
-      <div className="row" style={{ height: "500px" }}>
+      {/* <hr /> */}
+      <div className="row h-100">
         <div className="col">
           <textarea
             value={content}
             onChange={onChangeContent}
-            className="form-control form-control-sm h-100"
-            rows={20}></textarea>
+            className="form-control form-control-sm h-100"></textarea>
         </div>
         <div className="col">
           <textarea
             value={metadata}
             onChange={onChangeMetadata}
-            className="form-control form-control-sm h-100"
-            rows={20}></textarea>
+            className="form-control form-control-sm h-100"></textarea>
         </div>
         <div className="col">
           <div
@@ -252,6 +260,7 @@ function ClipEditor({ className }) {
               whiteSpace: "pre-wrap",
               overflowY: "auto",
               height: "100%",
+              fontSize: "small",
             }}>
             {multiCtx.formatted}
           </div>
@@ -271,22 +280,14 @@ function HomePage({ className }) {
   return (
     <div className={className}>
       <div className="row h-100">
-        <div className="col-2">
-          <Button
-            className="w-100"
-            text="New Clip"
-            icon="plus-lg"
-            size="sm"
-            onClick={() => multiCtx.addClip()}
-          />
-          <hr />
+        <div className="col-3">
           {multiCtx.clips.map((x) => (
             <React.Fragment key={x.path}>
               <ClipItem item={x} />
             </React.Fragment>
           ))}
         </div>
-        <div className="col-10 border-start">
+        <div className="col-9">
           {multiCtx.currentClip.length !== 0 && <ClipEditor />}
         </div>
       </div>
@@ -351,65 +352,82 @@ function Nav({ className }) {
   const themes = [
     "light",
     "dark",
-    "caramel",
-    "ocean",
-    "violet",
-    "navy",
-    "vanilla",
-    "mint",
-    "ruby",
-    "forest",
+    "light-red",
+    "light-orange",
+    "light-green",
+    "light-blue",
+    "light-indigo",
+    "light-violet",
+    "dark-red",
+    "dark-orange",
+    "dark-green",
+    "dark-blue",
+    "dark-indigo",
+    "dark-violet",
   ];
 
   return (
-    <div className={className + " between"}>
-      <ButtonGroup size="sm">
-        {multiCtx.loading && (
-          <button className="btn border-0">
-            <Spinner />
-          </button>
-        )}
-        <Button
-          onClick={() => multiCtx.setCurrentPage("")}
-          className="border-0"
-          text="clipbin"
-          icon="clipboard-heart"
-        />
-      </ButtonGroup>
-      <ButtonGroup size="sm">
-        <Dropdown
-          className="btn-group btn-group-sm"
-          icon="paint-bucket"
-          text={multiCtx.settings.theme}
-          classNameMenu="text-center"
-          classNameBtn="btn text-capitalize">
-          {themes.map((x) => (
-            <React.Fragment key={x}>
-              {multiCtx.settings.theme !== x && (
-                <button
-                  className="dropdown-item text-capitalize small"
-                  onClick={() =>
-                    multiCtx.setSettings({ ...multiCtx.settings, theme: x })
-                  }>
-                  {x}
-                </button>
-              )}
-            </React.Fragment>
-          ))}
-        </Dropdown>
-        <Button
-          text="Settings"
-          icon="gear"
-          className={multiCtx.currentPage === "settings" ? " active" : ""}
-          onClick={() => multiCtx.setCurrentPage("settings")}
-        />
-        <Button
-          className={multiCtx.currentPage === "about" ? " active" : ""}
-          text="About"
-          icon="info-circle"
-          onClick={() => multiCtx.setCurrentPage("about")}
-        />
-      </ButtonGroup>
+    <div className={className}>
+      <div className="row">
+        <div className="col-3 between">
+          <ButtonGroup size="sm">
+            {multiCtx.loading && (
+              <button className="btn border-0">
+                <Spinner />
+              </button>
+            )}
+            <Button
+              onClick={() => multiCtx.setCurrentPage("")}
+              className="border-0"
+              text="clip-bin"
+              icon="scissors"
+            />
+          </ButtonGroup>
+          <Button
+            onClick={() => multiCtx.addClip()}
+            className=""
+            text="New Clip"
+            icon="plus-lg"
+            size="sm"
+          />
+        </div>
+        <div className="col-9">
+          <ButtonGroup size="sm" className="float-end">
+            <Dropdown
+              className="btn-group btn-group-sm"
+              icon="paint-bucket"
+              text={multiCtx.settings.theme}
+              classNameMenu="text-center"
+              classNameBtn="btn text-capitalize">
+              {themes.map((x) => (
+                <React.Fragment key={x}>
+                  {multiCtx.settings.theme !== x && (
+                    <button
+                      className="dropdown-item text-capitalize small"
+                      onClick={() =>
+                        multiCtx.setSettings({ ...multiCtx.settings, theme: x })
+                      }>
+                      {x}
+                    </button>
+                  )}
+                </React.Fragment>
+              ))}
+            </Dropdown>
+            <Button
+              text="Settings"
+              icon="gear"
+              className={multiCtx.currentPage === "settings" ? " active" : ""}
+              onClick={() => multiCtx.setCurrentPage("settings")}
+            />
+            <Button
+              className={multiCtx.currentPage === "about" ? " active" : ""}
+              text="About"
+              icon="info-circle"
+              onClick={() => multiCtx.setCurrentPage("about")}
+            />
+          </ButtonGroup>
+        </div>
+      </div>
     </div>
   );
 }
@@ -511,9 +529,8 @@ function App() {
 
   return (
     <MultiContext.Provider value={contextValue}>
-      <div className="p-4" style={{ height: "500px" }}>
-        <Nav />
-        <hr />
+      <div className="p-4" style={{ height: "600px" }}>
+        <Nav className="px-4" />
         <Display />
       </div>
     </MultiContext.Provider>
