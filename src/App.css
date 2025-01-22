@@ -113,4 +113,8 @@ textarea {
   .d-flex {
     display: unset !important;
   }
+
+  body {
+    padding: 0;
+  }
 }
