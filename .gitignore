@@ -1,0 +1,7 @@
+ClipBin.egg-info/
+.env
+*.pyc
+.DS_Store
+.vscode/
+clips/
+*.db
