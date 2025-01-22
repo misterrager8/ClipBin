@@ -103,3 +103,14 @@ textarea {
 .label {
   letter-spacing: 1.5px;
 }
+
+@media screen and (max-width: 1100px) {
+  .w-75,
+  .w-25 {
+    width: 100% !important;
+  }
+
+  .d-flex {
+    display: unset !important;
+  }
+}
