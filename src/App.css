@@ -1,0 +1,105 @@
+:root,
+html[data-theme="light"] {
+  --primary-bg: #cccccc;
+  --primary-txt: #1a1a1a;
+
+  --secondary-bg: #c2c1c1;
+
+  --btn-bg: #6c3f9d;
+  --btn-txt: #cccccc;
+}
+
+html[data-theme="dark"] {
+  --primary-bg: #1a1a1a;
+  --primary-txt: #cccccc;
+
+  --secondary-bg: #1f1f1f;
+
+  --btn-bg: #9879ba;
+  --btn-txt: #cccccc;
+}
+
+a,
+a:hover {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+body {
+  background-color: var(--primary-bg);
+  color: var(--primary-txt);
+  padding: 2rem;
+}
+
+.btn {
+  background-color: transparent;
+  border-color: var(--btn-bg);
+  color: var(--btn-bg);
+  letter-spacing: 2px;
+  border-width: 1.5px;
+}
+
+.btn:hover {
+  background-color: var(--btn-bg);
+  color: var(--btn-txt);
+  border-color: transparent;
+}
+
+.capped {
+  text-transform: capitalize;
+}
+
+.between {
+  display: flex;
+  justify-content: space-between;
+}
+
+.outer {
+  padding: 0.5rem;
+  height: 100%;
+}
+
+.inner {
+  border-radius: 10px;
+  padding: 1.25rem;
+  height: 100%;
+  background-color: var(--secondary-bg);
+}
+
+.d-flex {
+  height: 93vh;
+}
+
+.hovered {
+  border-bottom: 1px dotted var(--btn-bg);
+  border-top: 1px dotted var(--btn-bg);
+}
+
+.selected {
+  border-bottom: 1px dotted var(--btn-bg);
+  border-top: 1px dotted var(--btn-bg);
+  font-style: italic;
+  font-weight: bold;
+}
+
+.clip-item {
+  padding: 4px 15px;
+  margin: 3px 10px;
+  cursor: pointer;
+}
+
+.form-control,
+.form-control:focus {
+  background-color: var(--primary-bg);
+  color: var(--primary-txt);
+}
+
+textarea {
+  width: 100%;
+  border: 0 !important;
+}
+
+.label {
+  letter-spacing: 1.5px;
+}
